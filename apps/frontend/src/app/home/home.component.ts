@@ -9,7 +9,6 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { ClothesFacadeService } from '../services/products/products-facade.service';
 import { HomeService } from '../services/home-service';
-
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -45,7 +44,7 @@ export class HomeComponent {
   }
 
   fetchProducts(page: number, perPage: number) {
-    this.clothesFacade.fetchProducts(page, perPage).subscribe(res => {
+    this.clothesFacade.fetchProducts(page, perPage).subscribe((res) => {
       this.products = res.items;
       this.totalRecords = res.total;
     });

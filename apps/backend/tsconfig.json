@@ -9,7 +9,7 @@
     
     "paths": {
       "src/*": ["./*",],
-      "@angular-monorepo/const": ["libs/const/src/index.ts"],
+      "@angular-monorepo/consts": ["libs/consts/src/index.ts"],
 
     }
   },

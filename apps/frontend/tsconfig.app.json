@@ -5,9 +5,13 @@
     "types": []
   },
   "files": ["src/main.ts"],
- "include": [
-  "src/**/*.ts",
-  "../../../utils/**/*.ts"
-],
-  "exclude": ["jest.config.ts", "src/**/*.test.ts", "src/**/*.spec.ts"]
+  "include": [
+    "src/**/*.ts",
+    "../../libs/**/*.ts"       // <- DODAJ TO!
+  ],
+  "exclude": [
+    "jest.config.ts",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts"
+  ]
 }

@@ -17,7 +17,6 @@ import { PaginationDTO } from './dto/pagination.dto';
 @Controller('items')
 export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}
-
   @Post()
   create(@Body() createItemDto: CreateItemDto) {
     return this.itemsService.create(createItemDto);
@@ -31,12 +30,10 @@ export class ItemsController {
     const pagination: PaginationDTO = { skip, limit };
     return this.itemsService.findAll(pagination);
   }
-
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.itemsService.findOne(id);
   }
-
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -44,7 +41,6 @@ export class ItemsController {
   ) {
     return this.itemsService.update(id, updateItemDto);
   }
-
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.itemsService.remove(id);

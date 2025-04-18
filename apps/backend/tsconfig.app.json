@@ -12,7 +12,6 @@
   },
   "include": [
     "src/**/*.ts",
-    "../../shared/src/**/*.ts"
   ],
   "exclude": [
     "jest.config.ts",
