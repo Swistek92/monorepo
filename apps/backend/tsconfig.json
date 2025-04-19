@@ -1,21 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "module": "CommonJS",
-    "target": "es2021",
-    "esModuleInterop": true,
-    "baseUrl": "./",
-    "outDir": "dist",
-    
-    "paths": {
-      "src/*": ["./*",],
-      "@angular-monorepo/consts": ["libs/consts/src/index.ts"],
-
-    }
-  },
   "files": [],
-  "include": ["**/*.ts"],
-  "exclude": ["**/*.spec.ts"],
+  "include": [],
   "references": [
     {
       "path": "./tsconfig.app.json"
@@ -23,5 +9,8 @@
     {
       "path": "./tsconfig.spec.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "esModuleInterop": true
+  }
 }

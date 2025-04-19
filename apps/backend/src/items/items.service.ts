@@ -5,8 +5,8 @@ import { Item } from '../entities/item.entity';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { PaginationDTO } from './dto/pagination.dto';
-export const DEFAULT_PAGE_SIZE = 10;
-// import { API_URL } from '@my-monorepo/consts';
+// export const DEFAULT_PAGE_SIZE = 10;
+import { DEFAULT_PAGE_SIZE } from '@my-monorepo/consts';
 
 @Injectable()
 export class ItemsService {
@@ -20,6 +20,7 @@ export class ItemsService {
     return await this.itemRepo.save(newItem);
   }
   async findAll(paginationDTO: PaginationDTO) {
+    console.log('paginationDTO', DEFAULT_PAGE_SIZE);
     return await this.itemRepo.find({
       skip: paginationDTO.skip,
       take: paginationDTO.limit ?? DEFAULT_PAGE_SIZE,

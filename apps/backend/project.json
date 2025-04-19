@@ -3,15 +3,10 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/backend/src",
   "projectType": "application",
+  "implicitDependencies": ["consts"],
+
   "tags": [],
   "targets": {
-    "serve": {
-      "executor": "@nx/js:node",
-      "options": {
-        "buildTarget": "backend:build",
-        "watch": true
-      }
-    },
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
@@ -21,6 +16,31 @@
         "tsConfig": "apps/backend/tsconfig.app.json",
         "assets": [],
         "deleteOutputPath": true
+      },
+      "configurations": {
+        "development": {
+          "tsConfig": "apps/backend/tsconfig.app.json"
+        },
+        "production": {
+          "tsConfig": "apps/backend/tsconfig.app.json"
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "backend:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "backend:build:development"
+        },
+        "production": {
+          "buildTarget": "backend:build:production"
+        }
       }
     },
     "test": {
