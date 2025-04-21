@@ -67,21 +67,11 @@ export class ItemsService {
   }
 
   private mapToDto = (item: Item): CreatedItemDto => {
+    const { owner, ...rest } = item
     return {
-      id: item.id,
-      name: item.name,
-      image: item.image,
+      ...rest,
       price: Number(item.price),
-      description: item.description,
-      createdAt: item.createdAt,
-      category: item.category,
-      available: item.available,
-      tags: item.tags,
-      location: item.location,
-      ownerId: item.ownerId,
-      rating: item.rating,
-      views: item.views,
-      ownerEmail: item.owner?.email || "",
+      ownerEmail: owner?.email || "",
     }
   }
 }
