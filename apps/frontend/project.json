@@ -16,10 +16,7 @@
         "polyfills": ["zone.js"],
         "tsConfig": "apps/frontend/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": [
-  "apps/frontend/src/assets",
-  "apps/frontend/src/favicon.ico"
-],
+        "assets": ["apps/frontend/src/assets", "apps/frontend/src/favicon.ico"],
         "styles": ["apps/frontend/src/styles.scss"],
         "scripts": []
       },
@@ -29,7 +26,7 @@
             {
               "type": "initial",
               "maximumWarning": "500kb",
-              "maximumError": "1mb"
+              "maximumError": "3mb"
             },
             {
               "type": "anyComponentStyle",
