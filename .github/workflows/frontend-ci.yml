@@ -29,3 +29,18 @@ jobs:
       - name: Deploy to Vercel
         if: success()
         run: curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}"
+
+      - name: Notify Discord
+        if: always()
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST ${{ secrets.DISCORD_WEBHOOK_URL }} \
+            -d '{
+              "username": "GitHub Actions",
+              "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+              "embeds": [{
+                "title": "🚀 Frontend Deployment",
+                "description": "**Status:** `${{ job.status }}`\n**Branch:** `${{ github.ref_name }}`\n**Commit:** `${{ github.sha }}`",
+                "color": 5814783
+              }]
+            }'
