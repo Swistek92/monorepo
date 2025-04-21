@@ -1,31 +1,31 @@
-import { Injectable } from '@angular/core';
-import { ProductsService } from './products.service';
-import { Product, Products } from '../../types';
-import { Observable } from 'rxjs';
+import { Injectable } from "@angular/core"
+import { ProductsService } from "./products.service"
+import { CreatedItemDto, GetAllItemsResponse } from "@my-monorepo/consts"
+import { Observable } from "rxjs"
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class ClothesFacadeService {
   constructor(private productsService: ProductsService) {}
 
-  fetchProducts(page: number, perPage: number): Observable<Products> {
-    return this.productsService.getProducts({ page, perPage });
+  fetchProducts(skip: number, limit: number): Observable<GetAllItemsResponse> {
+    return this.productsService.getProducts({ skip, limit })
   }
 
-  getProductById(id: number): Observable<Product> {
-    return this.productsService.getProductById(id);
+  getProductById(id: number): Observable<CreatedItemDto> {
+    return this.productsService.getProductById(id)
   }
 
-  addProduct(product: Product): Observable<Product> {
-    return this.productsService.addProduct(product);
+  addProduct(product: CreatedItemDto): Observable<CreatedItemDto> {
+    return this.productsService.addProduct(product)
   }
 
-  editProduct(product: Product, id: number): Observable<Product> {
-    return this.productsService.editProduct(product, id);
+  editProduct(product: CreatedItemDto, id: number): Observable<CreatedItemDto> {
+    return this.productsService.editProduct(product, id)
   }
 
   deleteProduct(id: number): Observable<void> {
-    return this.productsService.deleteProduct(id);
+    return this.productsService.deleteProduct(id)
   }
 }

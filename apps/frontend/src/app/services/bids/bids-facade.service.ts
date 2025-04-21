@@ -1,26 +1,26 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { BidsService } from './bids.service';
-import { Bid, CreateBidPayload } from '../../types';
+import { Injectable } from "@angular/core"
+import { Observable } from "rxjs"
+import { BidsService } from "./bids.service"
+import { Bid, CreateBidPayload } from "@my-monorepo/consts"
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class BidsFacadeService {
   constructor(private bidsService: BidsService) {}
 
   // 🔍 Pobierz oferty dla konkretnego produktu
   getBidsByProduct(productId: number): Observable<Bid[]> {
-    return this.bidsService.getBidsByProduct(productId);
+    return this.bidsService.getBidsByProduct(productId)
   }
 
   // ➕ Dodaj nową ofertę
   createBid(payload: CreateBidPayload): Observable<Bid> {
-    return this.bidsService.createBid(payload);
+    return this.bidsService.createBid(payload)
   }
 
   // ❌ Usuń ofertę
   deleteBid(id: number): Observable<{ message: string }> {
-    return this.bidsService.deleteBid(id);
+    return this.bidsService.deleteBid(id)
   }
 }

@@ -8,13 +8,13 @@
       <p><strong>Rating:</strong> {{ p.rating }} / 5 ⭐</p>
       <p><strong>Owner:</strong> {{ p.ownerEmail }} (ID: {{ p.ownerId }})</p>
       <p><strong>Description:</strong> {{ p.description }}</p>
-      <p><strong>Created at:</strong> {{ p.createdAt | date: 'medium' }}</p>
+      <p><strong>Created at:</strong> {{ p.createdAt | date : "medium" }}</p>
       <p><strong>Category:</strong> {{ p.category }}</p>
 
       <p>
         <strong>Available:</strong>
         <p-tag [severity]="p.available ? 'success' : 'danger'">
-          {{ p.available ? 'Available' : 'Out of stock' }}
+          {{ p.available ? "Available" : "Out of stock" }}
         </p-tag>
       </p>
 

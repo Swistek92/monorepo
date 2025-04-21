@@ -1,5 +1,5 @@
 // src/items/dto/create-item.schema.ts
-import { z } from 'zod';
+import { z } from "zod"
 
 export const CreateItemSchema = z.object({
   name: z.string(),
@@ -12,6 +12,6 @@ export const CreateItemSchema = z.object({
   tags: z.array(z.string()),
   location: z.string(),
   ownerId: z.number().int().positive(),
-});
-
-export type CreateItemDto = z.infer<typeof CreateItemSchema>;
+  rating: z.number().min(0).max(5).optional().default(0),
+  views: z.number().int().min(0).optional().default(0),
+})

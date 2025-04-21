@@ -1,16 +1,16 @@
-import { Component, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Product, Products, PopupMode } from '../types';
-import { ProductComponent } from '../components/product/product.component';
-import { ProductFormComponent } from '../components/popup/product-form/product-form.component';
-import { Paginator, PaginatorModule } from 'primeng/paginator';
-import { PopupWrapperComponent } from '../components/popup/popup-wrapper/popup-wrapper.component';
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { ClothesFacadeService } from '../services/products/products-facade.service';
-import { HomeService } from '../services/home-service';
+import { Component, ViewChild, OnInit } from "@angular/core"
+import { CommonModule } from "@angular/common"
+import { CreatedItemDto, PopupMode } from "@my-monorepo/consts"
+import { ProductComponent } from "../components/product/product.component"
+import { ProductFormComponent } from "../components/popup/product-form/product-form.component"
+import { Paginator, PaginatorModule } from "primeng/paginator"
+import { PopupWrapperComponent } from "../components/popup/popup-wrapper/popup-wrapper.component"
+import { ButtonModule } from "primeng/button"
+import { DialogModule } from "primeng/dialog"
+import { ClothesFacadeService } from "../services/products/products-facade.service"
+import { HomeService } from "../services/home-service"
 @Component({
-  selector: 'app-home',
+  selector: "app-home",
   standalone: true,
   imports: [
     CommonModule,
@@ -20,51 +20,49 @@ import { HomeService } from '../services/home-service';
     ButtonModule,
     DialogModule,
   ],
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+  templateUrl: "./home.component.html",
+  styleUrls: ["./home.component.scss"],
 })
-export class HomeComponent {
-  products: Product[] = [];
-  totalRecords = 0;
-  rows = 5;
+export class HomeComponent implements OnInit {
+  products: CreatedItemDto[] = []
+  totalRecords = 0
+  rows = 5
 
-  @ViewChild('paginator') paginator?: Paginator;
+  @ViewChild("paginator") paginator?: Paginator
 
-  constructor(
-    private clothesFacade: ClothesFacadeService,
-    public homeCtrl: HomeService
-  ) {}
+  constructor(private clothesFacade: ClothesFacadeService, public homeCtrl: HomeService) {}
 
   ngOnInit() {
-    this.fetchProducts(0, this.rows);
+    this.fetchProducts(0, this.rows)
   }
 
   onPageChange(event: any) {
-    this.fetchProducts(event.page, event.rows);
+    const skip = event.page * event.rows
+    const limit = event.rows
+    this.fetchProducts(skip, limit)
+  }
+  fetchProducts(skip: number, limit: number) {
+    this.clothesFacade.fetchProducts(skip, limit).subscribe((res) => {
+      this.products = res.items
+      this.totalRecords = res.total
+    })
   }
 
-  fetchProducts(page: number, perPage: number) {
-    this.clothesFacade.fetchProducts(page, perPage).subscribe((res) => {
-      this.products = res.items;
-      this.totalRecords = res.total;
-    });
-  }
-
-  onPopupConfirm(product: Product) {
+  onPopupConfirm(product: CreatedItemDto) {
     this.homeCtrl.confirmPopup(product, () => {
-      this.fetchProducts(0, this.rows);
-      this.resetPaginator();
-    });
+      this.fetchProducts(0, this.rows)
+      this.resetPaginator()
+    })
   }
 
   resetPaginator() {
-    this.paginator?.changePage(0);
+    this.paginator?.changePage(0)
   }
 
   deleteProduct(id: number) {
     this.clothesFacade.deleteProduct(id).subscribe(() => {
-      this.fetchProducts(0, this.rows);
-      this.resetPaginator();
-    });
+      this.fetchProducts(0, this.rows)
+      this.resetPaginator()
+    })
   }
 }

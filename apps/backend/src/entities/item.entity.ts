@@ -6,59 +6,62 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-} from 'typeorm';
-import { User } from './user.entity';
-import { Review } from './rewiew.entity';
-import { Bid } from './bid.entity';
+} from "typeorm"
+import { User } from "./user.entity"
+import { Review } from "./rewiew.entity"
+import { Bid } from "./bid.entity"
 
 @Entity()
 export class Item {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
   @Column({ default: 0 })
-  rating: number;
+  rating: number | null
 
   @Column({ default: 0 })
-  views: number;
+  views: number
 
   @Column()
-  name: string;
+  name: string
 
   @Column()
-  image: string;
+  image: string
 
-  @Column('decimal')
-  price: number;
+  @Column("decimal")
+  price: number
 
   @ManyToOne(() => User, (user) => user.ownedItems)
-  @JoinColumn({ name: 'ownerId' })
-  owner: User;
+  @JoinColumn({ name: "ownerId" })
+  owner: User
 
   @Column()
-  description: string;
+  ownerId: number
 
   @Column()
-  createdAt: Date;
+  description: string
 
   @Column()
-  category: string;
+  createdAt: Date
+
+  @Column()
+  category: string
 
   @Column({ default: true })
-  available: boolean;
+  available: boolean
 
-  @Column('simple-array') // np. "cotton,summer,unisex"
-  tags: string[];
+  @Column("simple-array") // np. "cotton,summer,unisex"
+  tags: string[]
 
   @Column()
-  location: string;
+  location: string
 
   @ManyToMany(() => User, (user) => user.favorites)
-  likedBy: User[];
+  likedBy: User[]
 
   @OneToMany(() => Review, (review) => review.product)
-  reviews: Review[];
+  reviews: Review[]
 
   @OneToMany(() => Bid, (bid) => bid.product)
-  bids: Bid[];
+  bids: Bid[]
 }

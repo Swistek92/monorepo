@@ -1,44 +1,87 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Item } from '../entities/item.entity';
-import { CreateItemDto } from './dto/create-item.dto';
-import { UpdateItemDto } from './dto/update-item.dto';
-import { PaginationDTO } from './dto/pagination.dto';
-// export const DEFAULT_PAGE_SIZE = 10;
-import { DEFAULT_PAGE_SIZE } from '@my-monorepo/consts';
+import { Injectable, NotFoundException } from "@nestjs/common"
+import { InjectRepository } from "@nestjs/typeorm"
+import { Repository } from "typeorm"
+import { Item } from "../entities/item.entity"
+import {
+  CreateItemDto,
+  UpdateItemDto,
+  PaginationDTO,
+  CreatedItemDto,
+  GetAllItemsResponse,
+  DeleteItemResponse,
+} from "@my-monorepo/consts"
+import { DEFAULT_PAGE_SIZE } from "@my-monorepo/consts"
 
 @Injectable()
 export class ItemsService {
   constructor(
     @InjectRepository(Item)
-    private readonly itemRepo: Repository<Item>
+    private readonly itemRepo: Repository<Item>,
   ) {}
-  async create(createItemDto: CreateItemDto) {
-    const newItem = this.itemRepo.create(createItemDto);
-    // console.log('API_URL', API_URL);
-    return await this.itemRepo.save(newItem);
+
+  async create(createItemDto: CreateItemDto): Promise<CreatedItemDto> {
+    const newItem = this.itemRepo.create(createItemDto)
+    const saved = await this.itemRepo.save(newItem)
+    return this.mapToDto(
+      await this.itemRepo.findOne({
+        where: { id: saved.id },
+        relations: ["owner"],
+      }),
+    )
   }
-  async findAll(paginationDTO: PaginationDTO) {
-    console.log('paginationDTO', DEFAULT_PAGE_SIZE);
-    return await this.itemRepo.find({
-      skip: paginationDTO.skip,
-      take: paginationDTO.limit ?? DEFAULT_PAGE_SIZE,
-    });
+
+  async findAll(paginationDTO: PaginationDTO): Promise<GetAllItemsResponse> {
+    const { skip = 0, limit } = paginationDTO
+    const take = typeof limit === "number" && limit > 0 ? limit : DEFAULT_PAGE_SIZE
+    const [items, total] = await this.itemRepo.findAndCount({
+      skip,
+      take,
+      relations: ["owner"], // 👈 dołącz relację owner
+    })
+
+    return {
+      items: items.map(this.mapToDto),
+      total,
+    }
   }
-  async findOne(id: number) {
-    const item = await this.itemRepo.findOne({ where: { id } });
-    if (!item) throw new NotFoundException('Item not found');
-    return item;
+
+  async findOne(id: number): Promise<CreatedItemDto> {
+    const fullItem = await this.itemRepo.findOne({
+      where: { id },
+      relations: ["owner"],
+    })
+    if (!fullItem) throw new NotFoundException("Created item not found")
+    return this.mapToDto(fullItem)
   }
-  async update(id: number, updateDto: UpdateItemDto) {
-    const result = await this.itemRepo.update({ id }, updateDto);
-    if (result.affected === 0) throw new NotFoundException('Item not found');
-    return this.findOne(id);
+
+  async update(id: number, updateDto: UpdateItemDto): Promise<CreatedItemDto> {
+    const result = await this.itemRepo.update({ id }, updateDto)
+    if (result.affected === 0) throw new NotFoundException("Item not found")
+    return this.findOne(id)
   }
-  async remove(id: number) {
-    const result = await this.itemRepo.delete({ id });
-    if (result.affected === 0) throw new NotFoundException('Item not found');
-    return { deleted: true };
+
+  async remove(id: number): Promise<DeleteItemResponse> {
+    const result = await this.itemRepo.delete({ id })
+    if (result.affected === 0) throw new NotFoundException("Item not found")
+    return { success: true, message: "Item deleted successfully" }
+  }
+
+  private mapToDto = (item: Item): CreatedItemDto => {
+    return {
+      id: item.id,
+      name: item.name,
+      image: item.image,
+      price: Number(item.price),
+      description: item.description,
+      createdAt: item.createdAt,
+      category: item.category,
+      available: item.available,
+      tags: item.tags,
+      location: item.location,
+      ownerId: item.ownerId,
+      rating: item.rating,
+      views: item.views,
+      ownerEmail: item.owner?.email || "",
+    }
   }
 }

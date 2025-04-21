@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { AuthService } from './auth.service';
+import { Injectable } from "@angular/core"
+import { Observable } from "rxjs"
+import { AuthService } from "./auth.service"
 import {
   AuthUser,
   AuthResponse,
@@ -9,114 +9,114 @@ import {
   RegisterPayload,
   UpdateUserPayload,
   UserRole,
-} from '../../types';
+} from "@my-monorepo/consts"
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AuthFacadeService {
   constructor(private authService: AuthService) {}
 
   // 🔐 Login
   login(payload: LoginPayload): Observable<AuthResponse> {
-    return this.authService.login(payload);
+    return this.authService.login(payload)
   }
 
   // 🆕 Register
   register(payload: RegisterPayload): Observable<{ message: string }> {
-    return this.authService.register(payload);
+    return this.authService.register(payload)
   }
 
   // 👤 Me
   getCurrentUser(): Observable<AuthUser> {
-    return this.authService.me();
+    return this.authService.me()
   }
 
   // 🔄 Refresh token
   refreshToken(): Observable<RefreshResponse> {
-    return this.authService.refreshToken();
+    return this.authService.refreshToken()
   }
 
   // 🔁 Autologin
   autoLogin(): void {
-    this.authService.autoLogin();
+    this.authService.autoLogin()
   }
 
   // ✅ Set user in store
   setUser(user: AuthUser): void {
-    this.authService.setUser(user);
+    this.authService.setUser(user)
   }
 
   getUser(): AuthUser | null {
-    return this.authService.getUser();
+    return this.authService.getUser()
   }
 
   // 📦 Token helpers
   setTokens(access: string, refresh: string): void {
-    this.authService.setTokens(access, refresh);
+    this.authService.setTokens(access, refresh)
   }
 
   getAccessToken(): string | null {
-    return this.authService.getAccessToken();
+    return this.authService.getAccessToken()
   }
 
   getRefreshToken(): string | null {
-    return this.authService.getRefreshToken();
+    return this.authService.getRefreshToken()
   }
 
   clearSession(): void {
-    this.authService.clearSession();
+    this.authService.clearSession()
   }
 
   // 🚪 Logout
   logout(): void {
-    this.authService.logout();
+    this.authService.logout()
   }
 
   // 🔍 Login status
   isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
+    return this.authService.isLoggedIn()
   }
 
   // 🔍 Verify token
   checkTokenValidity(token: string): Promise<void> {
-    return this.authService.checkTokenValidity(token);
+    return this.authService.checkTokenValidity(token)
   }
 
   // 📋 ADMIN — get all users
   getAllUsers(): Observable<AuthUser[]> {
-    return this.authService.getAllUsers();
+    return this.authService.getAllUsers()
   }
 
   // 🛠️ ADMIN — update user
   updateUser(id: number, data: UpdateUserPayload): Observable<AuthUser> {
-    return this.authService.updateUser(id, data);
+    return this.authService.updateUser(id, data)
   }
 
   // ❌ ADMIN — delete user
   deleteUser(id: number): Observable<{ message: string }> {
-    return this.authService.deleteUser(id);
+    return this.authService.deleteUser(id)
   }
 
   // ✅ User role & status helpers
 
   isAdmin(): boolean {
-    return this.authService.getUser()?.role === 'admin';
+    return this.authService.getUser()?.role === "admin"
   }
 
   isUser(): boolean {
-    return this.authService.getUser()?.role === 'user';
+    return this.authService.getUser()?.role === "user"
   }
 
   isActive(): boolean {
-    return !!this.authService.getUser()?.isActive;
+    return !!this.authService.getUser()?.isActive
   }
 
   hasRole(role: UserRole): boolean {
-    return this.authService.getUser()?.role === role;
+    return this.authService.getUser()?.role === role
   }
 
   isOwner(id: number): boolean {
-    return this.authService.getUser()?.id === id;
+    return this.authService.getUser()?.id === id
   }
 }
