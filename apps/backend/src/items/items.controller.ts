@@ -1,87 +1,62 @@
-import { Injectable, NotFoundException } from "@nestjs/common"
-import { InjectRepository } from "@nestjs/typeorm"
-import { Repository } from "typeorm"
-import { Item } from "../entities/item.entity"
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  ParseIntPipe,
+  DefaultValuePipe,
+} from "@nestjs/common"
+import { ItemsService } from "./items.service"
 import {
   CreateItemDto,
   UpdateItemDto,
   PaginationDTO,
-  CreatedItemDto,
   GetAllItemsResponse,
+  CreatedItemDto,
   DeleteItemResponse,
 } from "@my-monorepo/consts"
-import { DEFAULT_PAGE_SIZE } from "@my-monorepo/consts"
+import { Public } from "../auth/decorators/public.decorator"
 
-@Injectable()
-export class ItemsService {
-  constructor(
-    @InjectRepository(Item)
-    private readonly itemRepo: Repository<Item>,
-  ) {}
+@Public()
+@Controller("items")
+export class ItemsController {
+  constructor(private readonly itemsService: ItemsService) {}
 
-  async create(createItemDto: CreateItemDto): Promise<CreatedItemDto> {
-    const newItem = this.itemRepo.create(createItemDto)
-    const saved = await this.itemRepo.save(newItem)
-    return this.mapToDto(
-      await this.itemRepo.findOne({
-        where: { id: saved.id },
-        relations: ["owner"],
-      }),
-    )
+  @Post()
+  async create(@Body() createItemDto: CreateItemDto): Promise<CreatedItemDto> {
+    return this.itemsService.create(createItemDto)
   }
 
-  async findAll(paginationDTO: PaginationDTO): Promise<GetAllItemsResponse> {
-    const { skip = 0, limit } = paginationDTO
-    const take = typeof limit === "number" && limit > 0 ? limit : DEFAULT_PAGE_SIZE
-    const [items, total] = await this.itemRepo.findAndCount({
-      skip,
-      take,
-      relations: ["owner"], // 👈 dołącz relację owner
-    })
-
-    return {
-      items: items.map(this.mapToDto),
-      total,
-    }
+  // GET /items?skip=10&limit=5
+  @Get()
+  async findAll(
+    @Query("skip", new DefaultValuePipe(0), ParseIntPipe) skip: number,
+    @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ): Promise<GetAllItemsResponse> {
+    const pagination: PaginationDTO = { skip, limit }
+    const allItems = await this.itemsService.findAll(pagination)
+    return allItems
+  }
+  @Get(":id")
+  async findOne(@Param("id", ParseIntPipe) id: number): Promise<CreatedItemDto> {
+    const item = await this.itemsService.findOne(id)
+    return item
   }
 
-  async findOne(id: number): Promise<CreatedItemDto> {
-    const item = await this.itemRepo.findOne({
-      where: { id },
-      relations: ["owner"], // 👈 dołącz relację owner
-    })
-    if (!item) throw new NotFoundException("Item not found")
-    return this.mapToDto(item)
+  @Patch(":id")
+  async update(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() updateItemDto: UpdateItemDto,
+  ): Promise<CreatedItemDto> {
+    return this.itemsService.update(id, updateItemDto)
   }
 
-  async update(id: number, updateDto: UpdateItemDto): Promise<CreatedItemDto> {
-    const result = await this.itemRepo.update({ id }, updateDto)
-    if (result.affected === 0) throw new NotFoundException("Item not found")
-    return this.findOne(id)
-  }
-
-  async remove(id: number): Promise<DeleteItemResponse> {
-    const result = await this.itemRepo.delete({ id })
-    if (result.affected === 0) throw new NotFoundException("Item not found")
-    return { success: true, message: "Item deleted successfully" }
-  }
-
-  private mapToDto = (item: Item): CreatedItemDto => {
-    return {
-      id: item.id,
-      name: item.name,
-      image: item.image,
-      price: Number(item.price),
-      description: item.description,
-      createdAt: item.createdAt,
-      category: item.category,
-      available: item.available,
-      tags: item.tags,
-      location: item.location,
-      ownerId: item.ownerId,
-      rating: item.rating,
-      views: item.views,
-      ownerEmail: item.owner?.email || "",
-    }
+  @Delete(":id")
+  async remove(@Param("id", ParseIntPipe) id: number): Promise<DeleteItemResponse> {
+    return this.itemsService.remove(id)
   }
 }
