@@ -16,7 +16,6 @@
     "baseUrl": ".",
     "paths": {
       "@my-monorepo/consts": ["consts/src/index.ts"]
-      // "@my-monorepo/consts/*": ["libs/consts/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]
