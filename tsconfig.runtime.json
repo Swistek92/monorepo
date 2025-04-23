@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@my-monorepo/consts": ["./dist/consts/src/index.js"]
+    }
+  }
+}

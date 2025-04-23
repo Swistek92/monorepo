@@ -1,0 +1,26 @@
+# Ignoruj zależności
+node_modules
+**/node_modules
+
+# Ignoruj frontend + testy
+apps/frontend/
+apps/frontend-e2e/
+apps/backend-e2e/
+.angular/
+tmp/
+.cache/
+
+# Git & IDE
+.git
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Inne niepotrzebne pliki
+coverage
+*.spec.ts
+*.log
+.env.local
+.env.test.local
+.env.production.local

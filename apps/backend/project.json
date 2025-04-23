@@ -4,7 +4,6 @@
   "sourceRoot": "apps/backend/src",
   "projectType": "application",
   "implicitDependencies": ["consts"],
-
   "tags": [],
   "targets": {
     "build": {
@@ -14,7 +13,23 @@
         "outputPath": "dist/apps/backend",
         "main": "apps/backend/src/main.ts",
         "tsConfig": "apps/backend/tsconfig.app.json",
-        "assets": [],
+        "assets": [
+          {
+            "input": "apps/backend/src",
+            "glob": "**/*.graphql",
+            "output": "dist/apps/backend"
+          },
+          {
+            "input": "apps/backend/src",
+            "glob": "**/*.hbs",
+            "output": "dist/apps/backend"
+          },
+          {
+            "input": "apps/backend",
+            "glob": ".env",
+            "output": "dist/apps/backend"
+          }
+        ],
         "deleteOutputPath": true
       },
       "configurations": {
@@ -45,10 +60,16 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/apps/backend"],
+      "outputs": ["{workspaceRoot}/coverage/apps/backend"],
       "options": {
         "jestConfig": "apps/backend/jest.config.ts",
         "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["apps/backend/**/*.ts"]
       }
     }
   }
