@@ -3,10 +3,10 @@ name: CI/CD for Backend
 on:
   push:
     paths:
-      - "apps/backend/**" # Kiedy zmiany są wprowadzane w folderze backend
+      - "apps/backend/**"
   pull_request:
     paths:
-      - "apps/backend/**" # Kiedy zmiany są wprowadzane w folderze backend
+      - "apps/backend/**"
 
 jobs:
   test-and-build:
@@ -21,19 +21,19 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "16" # Wybierz odpowiednią wersję Node.js
+          node-version: "20" # Wybierz odpowiednią wersję Node.js
 
       # Instalacja zależności
       - name: Install dependencies
         run: |
           cd apps/backend
-          npm install
+          npm install  # Instalowanie lokalnych zależności
 
-      # Uruchomienie testów NX
+      # Uruchomienie testów za pomocą lokalnego nx
       - name: Run Jest tests
         run: |
           cd apps/backend
-          nx run backend:test  # Uruchamia testy dla aplikacji backend
+          npx nx run backend:test  # Uruchamia testy za pomocą lokalnego nx
 
       # Jeśli testy zakończą się sukcesem, zbuduj i wypchnij obraz Docker
       - name: Build Docker image
@@ -47,3 +47,19 @@ jobs:
       - name: Remove local Docker images
         run: |
           docker rmi swistek/my-backend:latest
+
+      # Powiadomienie do Discorda
+      - name: Notify Discord
+        if: always() # Uruchomi się niezależnie od statusu joba (sukcesu/porazki)
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST ${{ secrets.DISCORD_WEBHOOK_URL }} \
+            -d '{
+              "username": "GitHub Actions",
+              "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+              "embeds": [{
+                "title": "🚀 Backend Deployment",
+                "description": "**Status:** `${{ job.status }}`\n**Branch:** `${{ github.ref_name }}`\n**Commit:** `${{ github.sha }}`",
+                "color": 5814783
+              }]
+            }'
