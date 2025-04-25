@@ -9,7 +9,14 @@ import { AppModule } from "./app.module"
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   app.enableCors({
-    origin: "http://localhost:4200", // frontend Angular
+    origin: (origin, callback) => {
+      const allowed = ["http://localhost:4200", "https://monorepo-alpha-ivory.vercel.app"]
+      if (!origin || allowed.includes(origin)) {
+        callback(null, true)
+      } else {
+        callback(new Error("Not allowed by CORS"))
+      }
+    },
   })
 
   // console.log(aaa + "aa")
