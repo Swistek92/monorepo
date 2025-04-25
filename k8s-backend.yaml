@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: swistek/my-backend:latest # Replace with your actual image name
+          image: swistek/my-backend:latest
           ports:
             - containerPort: 80
           env:
@@ -26,11 +26,10 @@ kind: Service
 metadata:
   name: backend-service
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: backend
   ports:
     - protocol: TCP
       port: 80
       targetPort: 80
-      nodePort: 30080

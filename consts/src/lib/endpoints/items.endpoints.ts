@@ -1,4 +1,6 @@
-import { basebackendUrl } from "@my-monorepo/consts"
+// import { basebackendUrl } from "@my-monorepo/consts"
+
+const basebackendUrl = "http://34.77.152.119"
 export const ItemsEndpoints = {
   getAll: (skip = 0, limit = 10) => `${basebackendUrl}/items?skip=${skip}&limit=${limit}`,
   getById: (id: number) => `${basebackendUrl}/items/${id}`,
