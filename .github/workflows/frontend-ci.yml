@@ -1,56 +1,37 @@
-name: CI/CD for Backend
+name: Frontend CI
 
 on:
   push:
+    branches: [main]
     paths:
-      - "apps/backend/**" # Kiedy zmiany są wprowadzane w folderze backend
-  pull_request:
-    paths:
-      - "apps/backend/**" # Kiedy zmiany są wprowadzane w folderze backend
+      - "apps/frontend/**"
+      - "consts/**"
 
 jobs:
-  test-and-build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repozytorium
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      # Ustawienie Node.js
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: "16" # Wybierz odpowiednią wersję Node.js
+          node-version: 18
 
-      # Instalacja zależności
       - name: Install dependencies
-        run: |
-          cd apps/backend
-          npm install
+        run: npm install
 
-      # Uruchomienie testów NX
-      - name: Run Jest tests
-        run: |
-          cd apps/backend
-          nx run backend:test  # Uruchamia testy dla aplikacji backend
+      - name: Run tests
+        run: npx nx test frontend --verbose --runInBand
 
-      # Jeśli testy zakończą się sukcesem, zbuduj i wypchnij obraz Docker
-      - name: Build Docker image
-        if: success() # Zbuduj obraz tylko jeśli testy zakończyły się sukcesem
-        run: |
-          docker build -t swistek/my-backend:latest apps/backend  # Zbudowanie obrazu w folderze backend
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}  # Logowanie do Docker Hub
-          docker push swistek/my-backend:latest  # Wypychanie obrazu na Docker Hub
+      - name: Deploy to Vercel
+        if: success()
+        run: curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}"
 
-      # Opcjonalne czyszczenie lokalnych obrazów Docker
-      - name: Remove local Docker images
-        run: |
-          docker rmi swistek/my-backend:latest
-
-      # Powiadomienie do Discorda
       - name: Notify Discord
-        if: always() # Uruchomi się niezależnie od statusu joba (sukcesu/porazki)
+        if: always()
         run: |
           curl -H "Content-Type: application/json" \
             -X POST ${{ secrets.DISCORD_WEBHOOK_URL }} \
@@ -58,7 +39,7 @@ jobs:
               "username": "GitHub Actions",
               "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
               "embeds": [{
-                "title": "🚀 Backend Deployment",
+                "title": "🚀 Frontend Deployment",
                 "description": "**Status:** `${{ job.status }}`\n**Branch:** `${{ github.ref_name }}`\n**Commit:** `${{ github.sha }}`",
                 "color": 5814783
               }]
