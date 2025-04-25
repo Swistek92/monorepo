@@ -13,6 +13,7 @@ export class AppController {
 
   @Get()
   getHello(): string {
+    console.log('aaa');
     return this.configService.get('dbconfig.dev.type');
   }
 }
