@@ -13,44 +13,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repozytorium
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Ustawienie Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "20" # Wybierz odpowiednią wersję Node.js
+          node-version: "20"
 
-      # Instalacja zależności
       - name: Install dependencies
-        run: |
-          cd apps/backend
-          npm install  # Instalowanie lokalnych zależności
+        run: npm ci
 
-      # Uruchomienie testów za pomocą lokalnego nx
       - name: Run Jest tests
-        run: |
-          cd apps/backend
-          npx nx run backend:test  # Uruchamia testy za pomocą lokalnego nx
+        run: npx nx test backend
 
-      # Jeśli testy zakończą się sukcesem, zbuduj i wypchnij obraz Docker
       - name: Build Docker image
-        if: success() # Zbuduj obraz tylko jeśli testy zakończyły się sukcesem
+        if: success()
         run: |
-          docker build -t swistek/my-backend:latest apps/backend  # Zbudowanie obrazu w folderze backend
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}  # Logowanie do Docker Hub
-          docker push swistek/my-backend:latest  # Wypychanie obrazu na Docker Hub
+          docker build -t swistek/my-backend:latest -f apps/backend/Dockerfile .
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          docker push swistek/my-backend:latest
 
-      # Opcjonalne czyszczenie lokalnych obrazów Docker
       - name: Remove local Docker images
-        run: |
-          docker rmi swistek/my-backend:latest
+        run: docker rmi swistek/my-backend:latest
 
-      # Powiadomienie do Discorda
       - name: Notify Discord
-        if: always() # Uruchomi się niezależnie od statusu joba (sukcesu/porazki)
+        if: always()
         run: |
           curl -H "Content-Type: application/json" \
             -X POST ${{ secrets.DISCORD_WEBHOOK_URL }} \

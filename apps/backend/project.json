@@ -3,8 +3,8 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/backend/src",
   "projectType": "application",
-  "implicitDependencies": ["consts"],
   "tags": [],
+  "implicitDependencies": ["consts"],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
@@ -71,6 +71,10 @@
       "options": {
         "lintFilePatterns": ["apps/backend/**/*.ts"]
       }
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f apps/backend/Dockerfile . -t backend"
     }
   }
 }

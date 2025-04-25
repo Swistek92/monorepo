@@ -8,8 +8,8 @@ WORKDIR /app
 RUN npm install -g nx
 
 # Kopiowanie plików package.json i package-lock.json do kontenera
-COPY ../../package.json ./
-COPY ../../package-lock.json ./
+COPY package.json ./
+COPY package-lock.json ./
 
 # Instalacja zależności
 RUN npm ci --legacy-peer-deps
