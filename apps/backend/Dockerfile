@@ -23,7 +23,7 @@ COPY --from=builder /app/dist/consts ./dist/consts
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/package-lock.json ./
 COPY --from=builder /app/apps/backend/.env ./
-COPY tsconfig.runtime.json ./tsconfig.json
+COPY --from=builder /app/apps/backend/tsconfig.runtime.json ./tsconfig.json
 
 RUN npm install --omit=dev tsconfig-paths
 

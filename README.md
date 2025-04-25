@@ -16,7 +16,7 @@ docker stop $(docker ps -q)
 
 
 // build 
-docker build -t swistek/my-backend:latest .
+docker build -f apps/backend/Dockerfile -t swistek/my-backend:latest .
 docker login
 
 docker push swistek/my-backend:latest

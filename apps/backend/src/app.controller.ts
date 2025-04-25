@@ -10,7 +10,7 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    console.log("aasa")
+    console.log("aasbba")
     return this.configService.get("dbconfig.dev.type")
   }
 }
