@@ -47,19 +47,3 @@ jobs:
       - name: Remove local Docker images
         run: |
           docker rmi swistek/my-backend:latest
-
-      # Powiadomienie do Discorda
-      - name: Notify Discord
-        if: always() # Uruchomi się niezależnie od statusu joba (sukcesu/porazki)
-        run: |
-          curl -H "Content-Type: application/json" \
-            -X POST ${{ secrets.DISCORD_WEBHOOK_URL }} \
-            -d '{
-              "username": "GitHub Actions",
-              "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
-              "embeds": [{
-                "title": "🚀 Backend Deployment",
-                "description": "**Status:** `${{ job.status }}`\n**Branch:** `${{ github.ref_name }}`\n**Commit:** `${{ github.sha }}`",
-                "color": 5814783
-              }]
-            }'
