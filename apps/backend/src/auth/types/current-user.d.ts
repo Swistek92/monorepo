@@ -1,6 +1,6 @@
-import { Role } from '../enums/role.enum';
+import { Role } from "../enums/role.enum"
 
-export type CurrentUser = {
-  id: number;
-  role: Role;
-};
+type CurrentUser = {
+  id: number
+  roles: Role[]
+}

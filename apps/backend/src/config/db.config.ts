@@ -1,16 +1,20 @@
-import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
-import * as path from 'path';
-import { registerAs } from '@nestjs/config';
+import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions"
+import * as path from "path"
+import { registerAs } from "@nestjs/config"
+
+console.log("Connecting to database...")
+console.log("DB_URL:", process.env.DB_URL)
+console.log("DB_PORT:", process.env.DB_PORT)
 
 export default registerAs(
-  'dbconfig.dev',
+  "dbconfig.dev",
   (): PostgresConnectionOptions => ({
     // Don't put this here, Instead put in the env file
     url: process.env.DB_URL,
-    type: 'postgres',
+    type: "postgres",
     port: +process.env.DB_PORT,
-    entities: [path.resolve(__dirname, '..') + '/**/*.entity{.ts,.js}'],
+    entities: [path.resolve(__dirname, "..") + "/**/*.entity{.ts,.js}"],
 
     synchronize: true,
-  })
-);
+  }),
+)

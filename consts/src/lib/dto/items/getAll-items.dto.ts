@@ -1,10 +1,18 @@
-// src/items/dto/get-all-items.schema.ts
-import { z } from "zod"
-import { CreatedItemSchema } from "@my-monorepo/consts"
+/* eslint-disable @nx/enforce-module-boundaries */
+import { ApiProperty } from "@nestjs/swagger"
+import { IsArray, IsInt, Min, ValidateNested } from "class-validator"
+import { Type } from "class-transformer"
+import { CreatedItemDto } from "./created-item.dto"
 
-const GetAllItemsResponseSchema = z.object({
-  items: z.array(CreatedItemSchema),
-  total: z.number().int().nonnegative(),
-})
+export class GetAllItemsResponse {
+  @ApiProperty({ type: [CreatedItemDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreatedItemDto)
+  items: CreatedItemDto[]
 
-export type GetAllItemsResponse = z.infer<typeof GetAllItemsResponseSchema>
+  @ApiProperty()
+  @IsInt()
+  @Min(0)
+  total: number
+}

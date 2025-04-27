@@ -8,74 +8,75 @@ import {
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
-} from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import { Role } from '../auth/enums/role.enum';
-import { Item } from './item.entity';
-import { Bid } from './bid.entity';
-import { Review } from './rewiew.entity';
+} from "typeorm"
+import * as bcrypt from "bcrypt"
+import { Role } from "../auth/enums/role.enum"
+import { Item } from "./item.entity"
+import { Bid } from "./bid.entity"
+import { Review } from "./rewiew.entity"
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
   @Column({ nullable: true })
-  name: string;
+  name: string
 
   @Column()
-  email: string;
+  email: string
 
   @Column()
-  password: string;
+  password: string
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: Role,
-    default: Role.USER,
+    array: true,
+    default: [Role.USER],
   })
-  role: Role;
+  roles: Role[]
 
   @Column({ default: true })
-  isActive: boolean;
+  isActive: boolean
 
   @Column({ default: false })
-  verified: boolean;
+  verified: boolean
 
   @Column({ nullable: true })
-  avatar: string;
+  avatar: string
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: Date
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt: Date
 
   @Column({ nullable: true })
-  lastLogin: Date;
+  lastLogin: Date
 
   @Column({ nullable: true })
-  hashedRefreshToken: string;
+  hashedRefreshToken: string
 
   // ✅ Ulubione produkty
   @ManyToMany(() => Item, (item) => item.likedBy)
-  @JoinTable({ name: 'user_favorites' })
-  favorites: Item[];
+  @JoinTable({ name: "user_favorites" })
+  favorites: Item[]
 
   // ✅ Oferty użytkownika (bids)
   @OneToMany(() => Bid, (bid) => bid.user)
-  bids: Bid[];
+  bids: Bid[]
 
   // ✅ Wystawione przedmioty
   @OneToMany(() => Item, (item) => item.owner)
-  ownedItems: Item[];
+  ownedItems: Item[]
 
   // ✅ Recenzje użytkownika
   @OneToMany(() => Review, (review) => review.user)
-  reviews: Review[];
+  reviews: Review[]
 
   @BeforeInsert()
   async hashPassword() {
-    this.password = await bcrypt.hash(this.password, 10);
+    this.password = await bcrypt.hash(this.password, 10)
   }
 }

@@ -1,9 +1,14 @@
-// src/items/dto/delete-item-response.schema.ts
-import { z } from "zod"
+/* eslint-disable @nx/enforce-module-boundaries */
+import { ApiProperty } from "@nestjs/swagger"
+import { IsBoolean, IsOptional, IsString } from "class-validator"
 
-const DeleteItemResponseSchema = z.object({
-  success: z.boolean(),
-  message: z.string().optional(),
-})
+export class DeleteItemResponse {
+  @ApiProperty()
+  @IsBoolean()
+  success: boolean
 
-export type DeleteItemResponse = z.infer<typeof DeleteItemResponseSchema>
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  message?: string
+}

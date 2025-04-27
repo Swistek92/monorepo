@@ -21,7 +21,8 @@
         "outputPath": "dist/consts",
         "main": "consts/src/index.ts",
         "tsConfig": "consts/tsconfig.lib.json",
-        "assets": ["consts/*.md"]
+        "assets": ["consts/*.md"],
+        "externalDependencies": ["zod"]
       }
     },
     "nx-release-publish": {

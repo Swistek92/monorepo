@@ -1,7 +1,13 @@
 import { Injectable } from "@angular/core"
 import { Observable } from "rxjs"
 import { ApiService } from "../api.service"
-import { CreatedItemDto, CreateItemDto, PaginationParams, UpdateItemDto } from "@my-monorepo/consts"
+import {
+  CreatedItemDto,
+  CreateItemDto,
+  DeleteItemResponse,
+  PaginationParams,
+  UpdateItemDto,
+} from "@my-monorepo/consts"
 import { GetAllItemsResponse, ItemsEndpoints } from "@my-monorepo/consts"
 
 @Injectable({
@@ -33,7 +39,7 @@ export class ProductsService {
     return this.apiService.put<CreatedItemDto>(ItemsEndpoints.update(id), product, {})
   }
 
-  deleteProduct(id: number): Observable<void> {
-    return this.apiService.delete<void>(ItemsEndpoints.delete(id), {})
+  deleteProduct(id: number): Observable<DeleteItemResponse> {
+    return this.apiService.delete<DeleteItemResponse>(ItemsEndpoints.delete(id), {})
   }
 }

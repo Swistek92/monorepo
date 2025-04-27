@@ -1,3 +1,6 @@
+import { Role } from "../enums/role.enum"
+
 export type AuthJwtPayload = {
-  sub: number;
-};
+  sub: number
+  roles: Role[]
+}

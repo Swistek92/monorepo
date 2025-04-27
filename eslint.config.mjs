@@ -14,10 +14,7 @@ export default [
         "error",
         {
           enforceBuildableLibDependency: true,
-          allow: [
-            "^.*/eslint(\\.base)?\\.config\\.[cm]?js$",
-            "@my-monorepo/consts", // 👈 DODANE ZEZWOLENIE
-          ],
+          allow: ["^.*/eslint(\\.base)?\\.config\\.[cm]?js$", "@my-monorepo/consts", "zod"],
           depConstraints: [
             {
               sourceTag: "*",
@@ -27,18 +24,5 @@ export default [
         },
       ],
     },
-  },
-  {
-    files: [
-      "**/*.ts",
-      "**/*.tsx",
-      "**/*.cts",
-      "**/*.mts",
-      "**/*.js",
-      "**/*.jsx",
-      "**/*.cjs",
-      "**/*.mjs",
-    ],
-    rules: {},
   },
 ]
