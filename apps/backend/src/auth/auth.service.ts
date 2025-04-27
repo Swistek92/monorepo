@@ -24,22 +24,24 @@ export class AuthService {
     if (!user) throw new UnauthorizedException("User not found!")
     const isPasswordMatch = await compare(password, user.password)
     if (!isPasswordMatch) throw new UnauthorizedException("Invalid credentials")
-
+    if (!user.isActive) throw new UnauthorizedException("User is not active!")
+    console.log("User roles:", user.roles) // Debugging line
     return { id: user.id, roles: user.roles }
   }
 
-  async login(userId: number) {
-    const { accessToken, refreshToken } = await this.generateTokens(userId)
+  async login(userId: number, roles: Role[]) {
+    const { accessToken, refreshToken } = await this.generateTokens(userId, roles)
     const hashedRefreshToken = await argon2.hash(refreshToken)
     await this.userService.updateHashedRefreshToken(userId, hashedRefreshToken)
     return {
       id: userId,
+      roles,
       accessToken,
       refreshToken,
     }
   }
-  async generateTokens(userId: number) {
-    const payload: AuthJwtPayload = { sub: userId, roles: [] }
+  async generateTokens(userId: number, roles: Role[]) {
+    const payload: AuthJwtPayload = { sub: userId, roles }
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload),
       this.jwtService.signAsync(payload, this.refreshTokenConfig),
@@ -51,11 +53,15 @@ export class AuthService {
   }
 
   async refreshToken(userId: number) {
-    const { accessToken, refreshToken } = await this.generateTokens(userId)
+    const user = await this.userService.findOne(userId)
+    if (!user) throw new UnauthorizedException("User not found")
+
+    const { accessToken, refreshToken } = await this.generateTokens(userId, user.roles)
     const hashedRefreshToken = await argon2.hash(refreshToken)
     await this.userService.updateHashedRefreshToken(userId, hashedRefreshToken)
     return {
       id: userId,
+      roles: user.roles,
       accessToken,
       refreshToken,
     }

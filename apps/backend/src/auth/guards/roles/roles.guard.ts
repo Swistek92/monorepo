@@ -19,9 +19,10 @@ export class RolesGuard implements CanActivate {
 
     const { user } = context.switchToHttp().getRequest()
     console.log("User:", user) // Debugging line
-
+    console.log("Required Roles:", requiredRoles) // Debugging line
     // Rola użytkownika nie znajduje się w wymaganych? Blokujemy.
-    if (!requiredRoles.includes(user.role)) {
+    if (!user.roles.some((role) => requiredRoles.includes(role))) {
+      console.log("User role not allowed")
       return false
     }
 
