@@ -15,8 +15,10 @@ import { RefreshAuthGuard } from "./guards/refresh-auth/refresh-auth.guard"
 import { JwtAuthGuard } from "./guards/jwt-auth/jwt-auth.guard"
 import { Public } from "./decorators/public.decorator"
 import { GoogleAuthGuard } from "./guards/google-auth/google-auth.guard"
-import { Role } from "./enums/role.enum"
+// import { Role } from "./enums/role.enum"
 import { Roles } from "./decorators/roles.decorator"
+import { ApiBody, ApiOkResponse } from "@nestjs/swagger"
+import { LoginDto, LoginResponseDto } from "./dto"
 
 @Public()
 @Controller("auth")
@@ -24,10 +26,10 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
+  @ApiBody({ type: LoginDto })
+  @ApiOkResponse({ type: LoginResponseDto })
   @Post("login")
   async login(@Request() req) {
-    console.log("Login request:", req.user) // Debugging line
-
     return this.authService.login(req.user.id, req.user.roles)
   }
 

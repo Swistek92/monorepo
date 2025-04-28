@@ -16,15 +16,15 @@ import {
   CreateItemDto,
   UpdateItemDto,
   PaginationDTO,
-  GetAllItemsResponse,
+  GetAllItemsResponseDto,
   CreatedItemDto,
-  DeleteItemResponse,
-} from "@my-monorepo/consts"
+  DeleteItemResponseDto,
+} from "./dto"
 import { Public } from "../auth/decorators/public.decorator"
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger" // <- WAŻNE!
 import { RolesGuard } from "../auth/guards/roles/roles.guard"
 import { Roles } from "../auth/decorators/roles.decorator"
-import { Role } from "../auth/enums/role.enum"
+import { Role } from "@my-monorepo/consts"
 
 @Public()
 @ApiTags("items") // <--- Dodajesz nazwę sekcji w Swaggerze
@@ -45,7 +45,7 @@ export class ItemsController {
   async findAll(
     @Query("skip", new DefaultValuePipe(0), ParseIntPipe) skip: number,
     @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
-  ): Promise<GetAllItemsResponse> {
+  ): Promise<GetAllItemsResponseDto> {
     const pagination: PaginationDTO = { skip, limit }
     return this.itemsService.findAll(pagination)
   }
@@ -72,7 +72,7 @@ export class ItemsController {
   @Delete(":id")
   @ApiOperation({ summary: "Delete item by ID" })
   @ApiResponse({ status: 200, description: "Item deleted." })
-  async remove(@Param("id", ParseIntPipe) id: number): Promise<DeleteItemResponse> {
+  async remove(@Param("id", ParseIntPipe) id: number): Promise<DeleteItemResponseDto> {
     return this.itemsService.remove(id)
   }
 }

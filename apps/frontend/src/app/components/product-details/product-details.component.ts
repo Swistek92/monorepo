@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { ActivatedRoute, RouterModule } from "@angular/router"
-import { CreatedItemDto } from "@my-monorepo/consts"
+import { CreatedItem } from "../../../../types/types"
 import { ClothesFacadeService } from "../../services/products/products-facade.service"
 import { CardModule } from "primeng/card"
 import { ButtonModule } from "primeng/button"
@@ -26,10 +26,13 @@ import { BidsComponent } from "./bids/bids.component"
   styleUrls: ["./product-details.component.scss"],
 })
 export class ProductDetailsComponent implements OnInit {
-  product: CreatedItemDto | null = null
+  product: CreatedItem | null = null
   loading = true
 
-  constructor(private route: ActivatedRoute, private clothesFacade: ClothesFacadeService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private clothesFacade: ClothesFacadeService,
+  ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get("id"))

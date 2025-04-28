@@ -5,6 +5,7 @@
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": false,
+    "strictPropertyInitialization": false,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

@@ -1,6 +1,7 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { ApiPropertyOptional } from "@nestjs/swagger"
 import { IsOptional, IsInt, Min } from "class-validator"
+import { z } from "zod"
 
 export class PaginationDTO {
   @ApiPropertyOptional({ minimum: 1 })
@@ -15,12 +16,3 @@ export class PaginationDTO {
   @Min(1)
   limit?: number
 }
-
-// import { z } from "zod"
-
-// export const PaginationSchema = z.object({
-//   skip: z.coerce.number().positive().optional(),
-//   limit: z.coerce.number().positive().optional(),
-// })
-
-// export type PaginationDTO = z.infer<typeof PaginationSchema>

@@ -24,10 +24,6 @@
 //   location: string
 // }
 
-export type PaginationParams = {
-  skip: number
-  limit: number
-} & Record<string, string | number | boolean | ReadonlyArray<string | number | boolean>>
 
 export type PopupMode = "add" | "edit" | "view" | "custom" | null
 

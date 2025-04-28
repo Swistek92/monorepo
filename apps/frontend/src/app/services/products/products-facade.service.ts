@@ -1,6 +1,11 @@
 import { Injectable } from "@angular/core"
 import { ProductsService } from "./products.service"
-import { CreatedItemDto, DeleteItemResponse, GetAllItemsResponse } from "@my-monorepo/consts"
+import {
+  CreatedItem,
+  CreateItem,
+  DeleteItemResponse,
+  GetAllItemsResponse,
+} from "../../../../types/types"
 import { Observable } from "rxjs"
 
 @Injectable({
@@ -13,15 +18,15 @@ export class ClothesFacadeService {
     return this.productsService.getProducts({ skip, limit })
   }
 
-  getProductById(id: number): Observable<CreatedItemDto> {
+  getProductById(id: number): Observable<CreatedItem> {
     return this.productsService.getProductById(id)
   }
 
-  addProduct(product: CreatedItemDto): Observable<CreatedItemDto> {
+  addProduct(product: CreateItem): Observable<CreatedItem> {
     return this.productsService.addProduct(product)
   }
 
-  editProduct(product: CreatedItemDto, id: number): Observable<CreatedItemDto> {
+  editProduct(product: CreateItem, id: number): Observable<CreatedItem> {
     return this.productsService.editProduct(product, id)
   }
 

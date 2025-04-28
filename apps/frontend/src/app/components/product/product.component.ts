@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, OnInit, ViewChild } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import { CreatedItemDto, CreateItemDto } from "@my-monorepo/consts"
+import { CreatedItem } from "../../../../types/types"
 import { RatingModule } from "primeng/rating"
 import { FormsModule } from "@angular/forms"
 import { ButtonModule } from "primeng/button"
@@ -31,13 +31,16 @@ import { IsOwnerDirective } from "../../services/auth/directives/is-owner.direct
   providers: [ConfirmationService],
 })
 export class ProductComponent implements OnInit {
-  constructor(private confirmationService: ConfirmationService, private router: Router) {}
+  constructor(
+    private confirmationService: ConfirmationService,
+    private router: Router,
+  ) {}
 
   @ViewChild("deleteButton") deleteButton: any
-  @Input() product!: CreatedItemDto
+  @Input() product!: CreatedItem
 
-  @Output() edit: EventEmitter<CreatedItemDto> = new EventEmitter<CreatedItemDto>()
-  @Output() delete: EventEmitter<CreatedItemDto> = new EventEmitter<CreatedItemDto>()
+  @Output() edit: EventEmitter<CreatedItem> = new EventEmitter<CreatedItem>()
+  @Output() delete: EventEmitter<CreatedItem> = new EventEmitter<CreatedItem>()
 
   goToDetails(): void {
     this.router.navigate(["/product", this.product.id])
@@ -59,5 +62,7 @@ export class ProductComponent implements OnInit {
     })
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log("")
+  }
 }

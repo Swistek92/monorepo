@@ -2,7 +2,7 @@ import { DataSource } from "typeorm"
 import { Seeder, SeederFactoryManager } from "typeorm-extension"
 import { User } from "../entities/user.entity"
 import { Item } from "../entities/item.entity"
-import { Role } from "../auth/enums/role.enum"
+import { Role } from "@my-monorepo/consts"
 import { faker } from "@faker-js/faker"
 
 export class MainSeeder implements Seeder {

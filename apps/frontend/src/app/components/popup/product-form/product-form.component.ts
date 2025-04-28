@@ -8,12 +8,12 @@ import {
   Validators,
 } from "@angular/forms"
 import { PopupControllerService } from "../../../services/popup/popup-controller.service"
-import { CreatedItemDto, CreateItemDto, PopupMode } from "@my-monorepo/consts"
+import { PopupMode } from "@my-monorepo/consts"
 import { ButtonModule } from "primeng/button"
 import { InputTextModule } from "primeng/inputtext"
 import { RatingModule } from "primeng/rating"
 import { PopupWrapperComponent } from "../popup-wrapper/popup-wrapper.component"
-
+import { CreateItem } from "../../../../../types/types"
 interface ProductFormControls {
   name: FormControl
   price: FormControl
@@ -36,15 +36,15 @@ interface ProductFormControls {
 })
 export class ProductFormComponent implements OnInit {
   private fb = inject(FormBuilder)
-  private popupController = inject(PopupControllerService<CreatedItemDto>)
+  private popupController = inject(PopupControllerService<CreateItem>)
 
-  @Input() product: CreatedItemDto | null = null
+  @Input() product: CreateItem | null = null
   @Input() mode: PopupMode = "add"
 
   @Input() visible = false
   @Output() visibleChange = new EventEmitter<boolean>()
 
-  @Output() submit = new EventEmitter<CreatedItemDto>()
+  @Output() submit = new EventEmitter<CreateItem>()
   @Output() cancel = new EventEmitter<void>()
 
   form!: FormGroup
@@ -68,7 +68,7 @@ export class ProductFormComponent implements OnInit {
     }
   }
 
-  buildForm(product: CreatedItemDto | null) {
+  buildForm(product: CreateItem | null) {
     this.form = this.fb.group({
       name: [product?.name || "", [Validators.required]],
       image: [product?.image || ""],

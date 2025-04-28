@@ -1,14 +1,16 @@
 import { Injectable } from "@angular/core"
 import { Observable } from "rxjs"
 import { ApiService } from "../api.service"
+
+import { ItemsEndpoints } from "@my-monorepo/consts"
 import {
-  CreatedItemDto,
-  CreateItemDto,
+  CreatedItem,
+  CreateItem,
   DeleteItemResponse,
-  PaginationParams,
-  UpdateItemDto,
-} from "@my-monorepo/consts"
-import { GetAllItemsResponse, ItemsEndpoints } from "@my-monorepo/consts"
+  GetAllItemsResponse,
+  Pagination,
+  UpdateItem,
+} from "../../../../types/types"
 
 @Injectable({
   providedIn: "root",
@@ -16,7 +18,7 @@ import { GetAllItemsResponse, ItemsEndpoints } from "@my-monorepo/consts"
 export class ProductsService {
   constructor(private apiService: ApiService) {}
 
-  getProducts(params: PaginationParams): Observable<GetAllItemsResponse> {
+  getProducts(params: Pagination): Observable<GetAllItemsResponse> {
     const skip = Number(params.skip) || 0
     const limit = Number(params.limit) || 10
 
@@ -25,18 +27,18 @@ export class ProductsService {
     })
   }
 
-  getProductById(id: number): Observable<CreatedItemDto> {
-    return this.apiService.get<CreatedItemDto>(ItemsEndpoints.getById(id), {
+  getProductById(id: number): Observable<CreatedItem> {
+    return this.apiService.get<CreatedItem>(ItemsEndpoints.getById(id), {
       responseType: "json",
     })
   }
 
-  addProduct(product: CreateItemDto): Observable<CreatedItemDto> {
-    return this.apiService.post<CreatedItemDto>(ItemsEndpoints.create(), product, {})
+  addProduct(product: CreateItem): Observable<CreatedItem> {
+    return this.apiService.post<CreatedItem>(ItemsEndpoints.create(), product, {})
   }
 
-  editProduct(product: UpdateItemDto, id: number): Observable<CreatedItemDto> {
-    return this.apiService.put<CreatedItemDto>(ItemsEndpoints.update(id), product, {})
+  editProduct(product: UpdateItem, id: number): Observable<CreatedItem> {
+    return this.apiService.put<CreatedItem>(ItemsEndpoints.update(id), product, {})
   }
 
   deleteProduct(id: number): Observable<DeleteItemResponse> {

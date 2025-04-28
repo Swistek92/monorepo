@@ -22,3 +22,12 @@ export type Options = {
       }
     | boolean
 }
+
+import { z } from "zod"
+
+export const paginationSchema = z.object({
+  skip: z.number().int().min(1).optional(),
+  limit: z.number().int().min(1).optional(),
+})
+
+export type Pagination = z.infer<typeof paginationSchema>

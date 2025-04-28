@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   validate(payload: AuthJwtPayload) {
-    console.log("JWT payload:", payload) // Debugging line
+    // console.log("JWT payload:", payload) // Debugging line
     return { id: payload.sub, roles: payload.roles }
   }
 }

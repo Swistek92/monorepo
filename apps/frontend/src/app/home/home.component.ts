@@ -1,6 +1,6 @@
 import { Component, ViewChild, OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import { CreatedItemDto, PopupMode } from "@my-monorepo/consts"
+import { PopupMode } from "@my-monorepo/consts"
 import { ProductComponent } from "../components/product/product.component"
 import { ProductFormComponent } from "../components/popup/product-form/product-form.component"
 import { Paginator, PaginatorModule } from "primeng/paginator"
@@ -9,6 +9,7 @@ import { ButtonModule } from "primeng/button"
 import { DialogModule } from "primeng/dialog"
 import { ClothesFacadeService } from "../services/products/products-facade.service"
 import { HomeService } from "../services/home-service"
+import { CreatedItem, CreateItem } from "../../../types/types"
 @Component({
   selector: "app-home",
   standalone: true,
@@ -24,13 +25,16 @@ import { HomeService } from "../services/home-service"
   styleUrls: ["./home.component.scss"],
 })
 export class HomeComponent implements OnInit {
-  products: CreatedItemDto[] = []
+  products: CreatedItem[] = []
   totalRecords = 0
   rows = 5
 
   @ViewChild("paginator") paginator?: Paginator
 
-  constructor(private clothesFacade: ClothesFacadeService, public homeCtrl: HomeService) {}
+  constructor(
+    private clothesFacade: ClothesFacadeService,
+    public homeCtrl: HomeService,
+  ) {}
 
   ngOnInit() {
     this.fetchProducts(0, this.rows)
@@ -48,7 +52,7 @@ export class HomeComponent implements OnInit {
     })
   }
 
-  onPopupConfirm(product: CreatedItemDto) {
+  onPopupConfirm(product: CreateItem) {
     this.homeCtrl.confirmPopup(product, () => {
       this.fetchProducts(0, this.rows)
       this.resetPaginator()

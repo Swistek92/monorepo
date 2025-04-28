@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm"
 import * as bcrypt from "bcrypt"
-import { Role } from "../auth/enums/role.enum"
+import { Role } from "@my-monorepo/consts"
 import { Item } from "./item.entity"
 import { Bid } from "./bid.entity"
 import { Review } from "./rewiew.entity"

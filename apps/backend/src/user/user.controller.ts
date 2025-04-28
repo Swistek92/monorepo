@@ -14,9 +14,11 @@ import { UserService } from "./user.service"
 import { CreateUserDto } from "./dto/create-user.dto"
 import { UpdateUserDto } from "./dto/update-user.dto"
 import { JwtAuthGuard } from "../auth/guards/jwt-auth/jwt-auth.guard"
-import { Role } from "../auth/enums/role.enum"
+import { Role } from "@my-monorepo/consts"
 import { Roles } from "../auth/decorators/roles.decorator"
 import { RolesGuard } from "../auth/guards/roles/roles.guard"
+import { ApiBearerAuth, ApiOkResponse } from "@nestjs/swagger"
+import { ProfileDto } from "./dto/profile.dto"
 
 @Roles(Role.USER)
 @Controller("user")
@@ -28,13 +30,15 @@ export class UserController {
     return this.userService.create(createUserDto)
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get("profile")
-  async getProfile(@Req() req) {
+  @ApiOkResponse({ type: ProfileDto })
+  async getProfile(@Req() req): Promise<ProfileDto | null> {
     const user = await this.userService.findOne(req.user.id)
     if (user) {
       const { password, ...safeUser } = user
-      return safeUser
+      return safeUser as ProfileDto
     }
     return null
   }

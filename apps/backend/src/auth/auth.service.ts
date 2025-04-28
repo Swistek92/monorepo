@@ -8,7 +8,7 @@ import { ConfigType } from "@nestjs/config"
 import * as argon2 from "argon2"
 import { CurrentUser } from "./types/current-user"
 import { CreateUserDto } from "../user/dto/create-user.dto"
-import { Role } from "./enums/role.enum"
+import { Role } from "@my-monorepo/consts"
 
 @Injectable()
 export class AuthService {
@@ -21,6 +21,7 @@ export class AuthService {
 
   async validateUser(email: string, password: string) {
     const user = await this.userService.findByEmail(email)
+    console.log("User found:", user, password) // Debugging line
     if (!user) throw new UnauthorizedException("User not found!")
     const isPasswordMatch = await compare(password, user.password)
     if (!isPasswordMatch) throw new UnauthorizedException("Invalid credentials")

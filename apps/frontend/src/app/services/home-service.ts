@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core"
-import { CreatedItemDto, PopupMode } from "@my-monorepo/consts"
+import { PopupMode } from "@my-monorepo/consts"
 import { ClothesFacadeService } from "./products/products-facade.service"
-
+import { CreatedItem, CreateItem } from "../../../types/types"
 @Injectable({ providedIn: "root" })
 export class HomeService {
-  selectedProduct: CreatedItemDto = this.emptyProduct()
+  selectedProduct: CreatedItem = this.emptyProduct()
   popupMode: PopupMode = null
 
   constructor(private facade: ClothesFacadeService) {}
@@ -22,7 +22,7 @@ export class HomeService {
     this.popupMode = "add"
   }
 
-  openEdit(product: CreatedItemDto) {
+  openEdit(product: CreatedItem) {
     this.selectedProduct = product
     this.popupMode = "edit"
   }
@@ -31,7 +31,7 @@ export class HomeService {
     this.popupMode = null
   }
 
-  confirmPopup(product: CreatedItemDto, refreshFn: () => void) {
+  confirmPopup(product: CreateItem, refreshFn: () => void) {
     if (this.popupMode === "edit" && this.selectedProduct.id) {
       this.facade.editProduct(product, this.selectedProduct.id).subscribe(refreshFn)
     } else {
@@ -40,7 +40,7 @@ export class HomeService {
     this.popupMode = null
   }
 
-  private emptyProduct(): CreatedItemDto {
+  private emptyProduct(): CreatedItem {
     return {
       id: 0,
       name: "",

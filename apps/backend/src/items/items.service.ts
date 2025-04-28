@@ -7,9 +7,9 @@ import {
   UpdateItemDto,
   PaginationDTO,
   CreatedItemDto,
-  GetAllItemsResponse,
-  DeleteItemResponse,
-} from "@my-monorepo/consts"
+  GetAllItemsResponseDto,
+  DeleteItemResponseDto,
+} from "./dto"
 import { DEFAULT_PAGE_SIZE } from "@my-monorepo/consts"
 
 @Injectable()
@@ -30,7 +30,7 @@ export class ItemsService {
     )
   }
 
-  async findAll(paginationDTO: PaginationDTO): Promise<GetAllItemsResponse> {
+  async findAll(paginationDTO: PaginationDTO): Promise<GetAllItemsResponseDto> {
     const { skip = 0, limit } = paginationDTO
     const take = typeof limit === "number" && limit > 0 ? limit : DEFAULT_PAGE_SIZE
     const [items, total] = await this.itemRepo.findAndCount({
@@ -60,7 +60,7 @@ export class ItemsService {
     return this.findOne(id)
   }
 
-  async remove(id: number): Promise<DeleteItemResponse> {
+  async remove(id: number): Promise<DeleteItemResponseDto> {
     const result = await this.itemRepo.delete({ id })
     if (result.affected === 0) throw new NotFoundException("Item not found")
     return { success: true, message: "Item deleted successfully" }
