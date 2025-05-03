@@ -1,9 +1,9 @@
 import { Component, OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { AuthFacadeService } from "../../services/user-auth/auth-facade.service"
-import { AuthUser } from "@my-monorepo/consts"
 import { TableModule } from "primeng/table"
 import { ButtonModule } from "primeng/button"
+import { SafeUser } from "apps/frontend/types/types"
 
 @Component({
   selector: "app-dashboard",
@@ -13,7 +13,7 @@ import { ButtonModule } from "primeng/button"
   styleUrl: "./dashboard.component.scss",
 })
 export class DashboardComponent implements OnInit {
-  users: AuthUser[] = []
+  users: SafeUser[] = []
   loading = false
 
   constructor(private authFacade: AuthFacadeService) {}
@@ -26,6 +26,7 @@ export class DashboardComponent implements OnInit {
     this.loading = true
     this.authFacade.getAllUsers().subscribe({
       next: (users) => {
+        console.log("Fetched users:", users)
         this.users = users
         this.loading = false
       },
@@ -36,7 +37,7 @@ export class DashboardComponent implements OnInit {
     })
   }
 
-  toggleActivation(user: AuthUser): void {
+  toggleActivation(user: SafeUser): void {
     const updated = { ...user, isActive: !user.isActive }
 
     this.authFacade.updateUser(user.id, updated).subscribe({
@@ -50,7 +51,7 @@ export class DashboardComponent implements OnInit {
     })
   }
 
-  deleteUser(user: AuthUser): void {
+  deleteUser(user: SafeUser): void {
     if (!confirm(`Are you sure you want to delete ${user.name}?`)) return
 
     this.authFacade.deleteUser(user.id).subscribe({

@@ -30,7 +30,7 @@ export class AuthController {
   @ApiOkResponse({ type: LoginResponseDto })
   @Post("login")
   async login(@Request() req) {
-    return this.authService.login(req.user.id, req.user.roles)
+    return this.authService.login(req.user)
   }
 
   @UseGuards(RefreshAuthGuard)

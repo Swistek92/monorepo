@@ -24,14 +24,7 @@
 //   location: string
 // }
 
-
 export type PopupMode = "add" | "edit" | "view" | "custom" | null
-
-export type AuthResponse = {
-  accessToken: string
-  refreshToken: string
-  user: AuthUser
-}
 
 export type UserRole = "admin" | "user"
 
@@ -50,11 +43,6 @@ export type AuthUser = {
 }
 
 export type RegisterPayload = {
-  email: string
-  password: string
-}
-
-export type LoginPayload = {
   email: string
   password: string
 }

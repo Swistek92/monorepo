@@ -3,19 +3,19 @@ import {
   HttpRequest,
   HttpHandlerFn,
   HttpErrorResponse,
-} from '@angular/common/http';
-import { inject } from '@angular/core';
-import { AuthService } from '../../user-auth/auth.service';
-import { catchError, switchMap, throwError } from 'rxjs';
+} from "@angular/common/http"
+import { inject } from "@angular/core"
+import { AuthService } from "../../user-auth/auth.service"
+import { catchError, switchMap, throwError } from "rxjs"
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn) => {
-  const authService = inject(AuthService);
+  const authService = inject(AuthService)
 
-  const accessToken = authService.getAccessToken();
-
+  const accessToken = authService.getAccessToken()
+  // console.log("Access token:", accessToken)
   // do not attach token for login/refresh
-  if (req.url.includes('/login') || req.url.includes('/refresh')) {
-    return next(req);
+  if (req.url.includes("/login") || req.url.includes("/refresh")) {
+    return next(req)
   }
 
   const authReq = accessToken
@@ -24,27 +24,27 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
           Authorization: `Bearer ${accessToken}`,
         },
       })
-    : req;
+    : req
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
         return authService.refreshToken().pipe(
-          switchMap(res => {
-            authService.setTokens(res.accessToken, localStorage.getItem('refreshToken') || '');
+          switchMap((res) => {
+            authService.setTokens(res.accessToken, localStorage.getItem("refreshToken") || "")
             const newReq = req.clone({
               setHeaders: { Authorization: `Bearer ${res.accessToken}` },
-            });
-            return next(newReq);
+            })
+            return next(newReq)
           }),
           catchError(() => {
-            authService.logout();
-            return throwError(() => error);
-          })
-        );
+            authService.logout()
+            return throwError(() => error)
+          }),
+        )
       }
 
-      return throwError(() => error);
-    })
-  );
-};
+      return throwError(() => error)
+    }),
+  )
+}

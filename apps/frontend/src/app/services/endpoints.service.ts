@@ -7,9 +7,6 @@ export class EndpointsService {
   private readonly BASE_URL = "http://localhost:3000"
 
   // 🔐 AUTH
-  login(): string {
-    return `${this.BASE_URL}/auth/login`
-  }
 
   register(): string {
     return `${this.BASE_URL}/auth/register`

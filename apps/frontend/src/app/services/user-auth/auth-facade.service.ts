@@ -2,14 +2,13 @@ import { Injectable } from "@angular/core"
 import { Observable } from "rxjs"
 import { AuthService } from "./auth.service"
 import {
-  AuthUser,
-  AuthResponse,
-  LoginPayload,
   RefreshResponse,
   RegisterPayload,
+  Role,
   UpdateUserPayload,
   UserRole,
 } from "@my-monorepo/consts"
+import { AuthResponse, LoginPayload, SafeUser } from "apps/frontend/types/types"
 
 @Injectable({
   providedIn: "root",
@@ -19,6 +18,7 @@ export class AuthFacadeService {
 
   // 🔐 Login
   login(payload: LoginPayload): Observable<AuthResponse> {
+    console.log
     return this.authService.login(payload)
   }
 
@@ -28,7 +28,7 @@ export class AuthFacadeService {
   }
 
   // 👤 Me
-  getCurrentUser(): Observable<AuthUser> {
+  getCurrentUser(): Observable<SafeUser> {
     return this.authService.me()
   }
 
@@ -43,11 +43,11 @@ export class AuthFacadeService {
   }
 
   // ✅ Set user in store
-  setUser(user: AuthUser): void {
+  setUser(user: SafeUser): void {
     this.authService.setUser(user)
   }
 
-  getUser(): AuthUser | null {
+  getUser(): SafeUser | null {
     return this.authService.getUser()
   }
 
@@ -84,12 +84,13 @@ export class AuthFacadeService {
   }
 
   // 📋 ADMIN — get all users
-  getAllUsers(): Observable<AuthUser[]> {
-    return this.authService.getAllUsers()
+  getAllUsers(): Observable<SafeUser[]> {
+    const users = this.authService.getAllUsers()
+    return users
   }
 
   // 🛠️ ADMIN — update user
-  updateUser(id: number, data: UpdateUserPayload): Observable<AuthUser> {
+  updateUser(id: number, data: UpdateUserPayload): Observable<SafeUser> {
     return this.authService.updateUser(id, data)
   }
 
@@ -101,19 +102,19 @@ export class AuthFacadeService {
   // ✅ User role & status helpers
 
   isAdmin(): boolean {
-    return this.authService.getUser()?.role === "admin"
+    return this.authService.getUser()?.roles.includes(Role.ADMIN) ?? false
   }
 
   isUser(): boolean {
-    return this.authService.getUser()?.role === "user"
+    return this.authService.getUser()?.roles.includes(Role.USER) ?? false
   }
 
   isActive(): boolean {
     return !!this.authService.getUser()?.isActive
   }
 
-  hasRole(role: UserRole): boolean {
-    return this.authService.getUser()?.role === role
+  hasRole(role: Role): boolean {
+    return this.authService.getUser()?.roles.includes(role) ?? false
   }
 
   isOwner(id: number): boolean {

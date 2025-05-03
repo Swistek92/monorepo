@@ -3,15 +3,15 @@ import { Observable } from "rxjs"
 import { ApiService } from "../../services/api.service"
 import { EndpointsService } from "../endpoints.service"
 import {
-  AuthResponse,
-  AuthUser,
-  LoginPayload,
   RefreshResponse,
   RegisterPayload,
   UpdateUserPayload,
+  AuthEndpoints,
+  UserEndpoints,
 } from "@my-monorepo/consts"
 import { AuthStoreService } from "./auth-store.service"
 import { TokenVerifyService } from "./token-verify.service"
+import { AuthResponse, LoginPayload, SafeUser } from "apps/frontend/types/types"
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
@@ -41,7 +41,8 @@ export class AuthService {
   }
 
   login(payload: LoginPayload): Observable<AuthResponse> {
-    return this.api.post<AuthResponse>(this.endpoints.login(), payload, {})
+    const usr = this.api.post<AuthResponse>(AuthEndpoints.login(), payload, {})
+    return usr
   }
 
   register(payload: RegisterPayload): Observable<{ message: string }> {
@@ -53,8 +54,8 @@ export class AuthService {
     return this.api.post<RefreshResponse>(this.endpoints.refresh(), { refreshToken }, {})
   }
 
-  me(): Observable<AuthUser> {
-    return this.api.get<AuthUser>(this.endpoints.me(), {})
+  me(): Observable<SafeUser> {
+    return this.api.get<SafeUser>(this.endpoints.me(), {})
   }
 
   logout(): void {
@@ -65,13 +66,13 @@ export class AuthService {
   }
 
   // ✅ Set user directly into the store
-  setUser(user: AuthUser): void {
+  setUser(user: SafeUser): void {
     this.authStore.setUser(user)
   }
 
   // ADMIN
-  updateUser(id: number, data: UpdateUserPayload): Observable<AuthUser> {
-    return this.api.put<AuthUser>(this.endpoints.updateUser(id), data, {})
+  updateUser(id: number, data: UpdateUserPayload): Observable<SafeUser> {
+    return this.api.put<SafeUser>(this.endpoints.updateUser(id), data, {})
   }
 
   deleteUser(id: number): Observable<{ message: string }> {
@@ -79,8 +80,8 @@ export class AuthService {
     return this.api.delete<{ message: string }>(this.endpoints.deleteUser(id), {})
   }
 
-  getAllUsers(): Observable<AuthUser[]> {
-    return this.api.get<AuthUser[]>(this.endpoints.getAllUsers(), {})
+  getAllUsers(): Observable<SafeUser[]> {
+    return this.api.get<SafeUser[]>(UserEndpoints.getAll(), {})
   }
 
   // Helpers
@@ -106,7 +107,7 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.getAccessToken()
   }
-  getUser(): AuthUser | null {
+  getUser(): SafeUser | null {
     return this.authStore.getUser()
   }
 }

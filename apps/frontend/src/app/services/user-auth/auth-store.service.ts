@@ -1,13 +1,15 @@
 import { Injectable } from "@angular/core"
 import { BehaviorSubject, Observable } from "rxjs"
-import { AuthUser } from "@my-monorepo/consts"
+// import { SafeUser } from "@my-monorepo/consts"
+import { SafeUser } from "apps/frontend/types/types"
+import { Role } from "@my-monorepo/consts"
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthStoreService {
-  private userSubject = new BehaviorSubject<AuthUser | null>(null)
-  public user$: Observable<AuthUser | null> = this.userSubject.asObservable()
+  private userSubject = new BehaviorSubject<SafeUser | null>(null)
+  public user$: Observable<SafeUser | null> = this.userSubject.asObservable()
 
   constructor() {}
 
@@ -18,7 +20,7 @@ export class AuthStoreService {
   }
 
   // 📦 Set user after login/me()
-  setUser(user: AuthUser): void {
+  setUser(user: SafeUser): void {
     this.userSubject.next(user)
   }
 
@@ -28,7 +30,7 @@ export class AuthStoreService {
   }
 
   // ✅ Synchronous getters (np. do guardów)
-  getUser(): AuthUser | null {
+  getUser(): SafeUser | null {
     return this.userSubject.getValue()
   }
 
@@ -36,8 +38,8 @@ export class AuthStoreService {
     return !!this.getUser()
   }
 
-  hasRole(role: "admin" | "user"): boolean {
-    return this.getUser()?.role === role
+  hasRole(role: Role): boolean {
+    return this.getUser()?.roles.includes(role) ?? false
   }
 
   hasId(id: number): boolean {

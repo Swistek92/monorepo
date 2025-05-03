@@ -2,10 +2,11 @@ import { Component, Input, OnInit, inject } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { FormsModule } from "@angular/forms"
 import { BidsFacadeService } from "../../../services/bids/bids-facade.service"
-import { AuthUser, Bid, CreateBidPayload } from "@my-monorepo/consts"
+import { Bid, CreateBidPayload } from "@my-monorepo/consts"
 import { ButtonModule } from "primeng/button"
 import { InputNumberModule } from "primeng/inputnumber"
 import { AuthFacadeService } from "../../../services/user-auth/auth-facade.service"
+import { SafeUser } from "apps/frontend/types/types"
 
 @Component({
   selector: "app-bids",
@@ -25,7 +26,7 @@ export class BidsComponent implements OnInit {
 
   private bidsFacade = inject(BidsFacadeService)
   private authFacade = inject(AuthFacadeService)
-  currentUser: AuthUser | null = null
+  currentUser: SafeUser | null = null
 
   get isActiveUser(): boolean {
     return this.authFacade.isLoggedIn() && this.authFacade.isActive()

@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common"
 import { Reflector } from "@nestjs/core"
 import { ROLES_KEY } from "../../decorators/roles.decorator"
 import { Role } from "@my-monorepo/consts"
+import { SafeUserDto } from "../../dto"
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -18,9 +19,9 @@ export class RolesGuard implements CanActivate {
     }
 
     const { user } = context.switchToHttp().getRequest()
-    // console.log("User:", user) // Debugging line
-    // console.log("Required Roles:", requiredRoles) // Debugging line
-    if (!user.roles.some((role) => requiredRoles.includes(role))) {
+
+    const safeuser = user.user as SafeUserDto
+    if (!safeuser.roles.some((role) => requiredRoles.includes(role))) {
       console.log("User role not allowed")
       return false
     }

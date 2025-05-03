@@ -4,6 +4,7 @@ import { UpdateUserDto } from "./dto/update-user.dto"
 import { InjectRepository } from "@nestjs/typeorm"
 import { User } from "../entities/user.entity"
 import { Repository } from "typeorm"
+import { ProfileDto } from "./dto/profile.dto"
 
 @Injectable()
 export class UserService {
@@ -26,13 +27,14 @@ export class UserService {
     })
   }
 
-  findAll() {
-    return `This action returns all user`
+  async findAll(): Promise<User[]> {
+    return await this.UserRepo.find()
   }
 
   async findOne(id: number) {
     return this.UserRepo.findOne({
       where: { id },
+      relations: ["favorites", "bids", "ownedItems", "reviews"],
     })
   }
 
@@ -42,5 +44,13 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`
+  }
+  sanitizeUser(input: User | User[]): ProfileDto | ProfileDto[] {
+    const sanitize = (user: User): ProfileDto => {
+      const { password, hashedRefreshToken, ...safeUser } = user
+      return safeUser as ProfileDto
+    }
+
+    return Array.isArray(input) ? input.map(sanitize) : sanitize(input)
   }
 }

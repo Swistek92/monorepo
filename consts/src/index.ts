@@ -27,5 +27,5 @@ export * from "./lib/endpoints/user.endopoints"
 export * from "./lib/dto/user/enums/role.enum"
 
 // CONSTAS
-export const basebackendUrl = "http://localhost:80"
+export const basebackendUrl = "http://localhost:3000"
 export const basefrontendUrl = "http://localhost:4200"

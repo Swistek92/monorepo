@@ -19,6 +19,7 @@ import { Roles } from "../auth/decorators/roles.decorator"
 import { RolesGuard } from "../auth/guards/roles/roles.guard"
 import { ApiBearerAuth, ApiOkResponse } from "@nestjs/swagger"
 import { ProfileDto } from "./dto/profile.dto"
+import { SafeUserDto } from "../auth/dto"
 
 @Roles(Role.USER)
 @Controller("user")
@@ -31,16 +32,13 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get("profile")
   @ApiOkResponse({ type: ProfileDto })
   async getProfile(@Req() req): Promise<ProfileDto | null> {
     const user = await this.userService.findOne(req.user.id)
-    if (user) {
-      const { password, ...safeUser } = user
-      return safeUser as ProfileDto
-    }
-    return null
+    const safeUser = this.userService.sanitizeUser(user) as ProfileDto
+    return user ? safeUser : null
   }
 
   @Patch(":id")
@@ -53,5 +51,14 @@ export class UserController {
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.userService.remove(+id)
+  }
+
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
+  @Get("all")
+  async GetAll() {
+    const users = await this.userService.findAll()
+    const safeUsers = this.userService.sanitizeUser(users) as SafeUserDto[]
+    return users ? safeUsers : null
   }
 }

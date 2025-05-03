@@ -9,6 +9,7 @@ import * as argon2 from "argon2"
 import { CurrentUser } from "./types/current-user"
 import { CreateUserDto } from "../user/dto/create-user.dto"
 import { Role } from "@my-monorepo/consts"
+import { SafeUserDto, UserDto } from "./dto"
 
 @Injectable()
 export class AuthService {
@@ -19,30 +20,32 @@ export class AuthService {
     private refreshTokenConfig: ConfigType<typeof refreshJwtConfig>,
   ) {}
 
-  async validateUser(email: string, password: string) {
+  async validateUser(email: string, password: string): Promise<SafeUserDto> {
     const user = await this.userService.findByEmail(email)
-    console.log("User found:", user, password) // Debugging line
     if (!user) throw new UnauthorizedException("User not found!")
+
     const isPasswordMatch = await compare(password, user.password)
     if (!isPasswordMatch) throw new UnauthorizedException("Invalid credentials")
     if (!user.isActive) throw new UnauthorizedException("User is not active!")
-    console.log("User roles:", user.roles) // Debugging line
-    return { id: user.id, roles: user.roles }
+
+    const { password: _p, hashedRefreshToken: _h, ...safeUser } = user
+    return safeUser // Zwracamy bezpiecznego usera
   }
 
-  async login(userId: number, roles: Role[]) {
-    const { accessToken, refreshToken } = await this.generateTokens(userId, roles)
+  async login(user: SafeUserDto) {
+    const { accessToken, refreshToken } = await this.generateTokens(user)
     const hashedRefreshToken = await argon2.hash(refreshToken)
-    await this.userService.updateHashedRefreshToken(userId, hashedRefreshToken)
+    await this.userService.updateHashedRefreshToken(user.id, hashedRefreshToken)
+
     return {
-      id: userId,
-      roles,
+      user, // SafeUserDto
       accessToken,
       refreshToken,
     }
   }
-  async generateTokens(userId: number, roles: Role[]) {
-    const payload: AuthJwtPayload = { sub: userId, roles }
+
+  async generateTokens(user: SafeUserDto) {
+    const payload: AuthJwtPayload = { sub: user.id, user }
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload),
       this.jwtService.signAsync(payload, this.refreshTokenConfig),
@@ -57,12 +60,14 @@ export class AuthService {
     const user = await this.userService.findOne(userId)
     if (!user) throw new UnauthorizedException("User not found")
 
-    const { accessToken, refreshToken } = await this.generateTokens(userId, user.roles)
+    const { password: _p, hashedRefreshToken: _h, ...safeUser } = user
+
+    const { accessToken, refreshToken } = await this.generateTokens(safeUser)
     const hashedRefreshToken = await argon2.hash(refreshToken)
     await this.userService.updateHashedRefreshToken(userId, hashedRefreshToken)
+
     return {
-      id: userId,
-      roles: user.roles,
+      user: safeUser,
       accessToken,
       refreshToken,
     }
@@ -82,16 +87,17 @@ export class AuthService {
     await this.userService.updateHashedRefreshToken(userId, null)
   }
 
-  async validateJwtUser(userId: number) {
+  async validateJwtUser(userId: number): Promise<CurrentUser> {
     const user = await this.userService.findOne(userId)
     if (!user) throw new UnauthorizedException("User not found!")
-    const currentUser: CurrentUser = { id: user.id, roles: user.roles }
-    return currentUser
+
+    return { id: user.id, user: user }
   }
 
   async validateGoogleUser(googleUser: CreateUserDto) {
     const user = await this.userService.findByEmail(googleUser.email)
     if (user) return user
+
     return await this.userService.create(googleUser)
   }
 }
