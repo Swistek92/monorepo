@@ -6,9 +6,9 @@
   <h3>Latest Bids:</h3>
   <ul class="bids-list">
     <li *ngFor="let bid of bids">
-      <img [src]="bid.avatar" alt="avatar" width="30" height="30" />
+      <img [src]="bid.userAvatar" alt="avatar" width="30" height="30" />
       <strong>{{ bid.userName }}</strong> — 💰 {{ bid.amount }} zł
-      <small>({{ bid.createdAt | date: 'short' }})</small>
+      <small>({{ bid.createdAt | date: "short" }})</small>
       <button
         *ngIf="currentUser?.id === bid.userId"
         pButton

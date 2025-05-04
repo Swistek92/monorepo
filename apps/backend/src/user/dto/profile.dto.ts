@@ -66,9 +66,6 @@ export class ProfileDto {
     description: "Ulubione produkty użytkownika",
     required: false,
   })
-  @Expose()
-  favorites?: Item[]
-
   @ApiProperty({ type: () => [Bid], description: "Oferty użytkownika", required: false })
   @Expose()
   bids?: Bid[]

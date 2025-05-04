@@ -2,11 +2,11 @@ import { Component, Input, OnInit, inject } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { FormsModule } from "@angular/forms"
 import { BidsFacadeService } from "../../../services/bids/bids-facade.service"
-import { Bid, CreateBidPayload } from "@my-monorepo/consts"
 import { ButtonModule } from "primeng/button"
 import { InputNumberModule } from "primeng/inputnumber"
 import { AuthFacadeService } from "../../../services/user-auth/auth-facade.service"
-import { SafeUser } from "apps/frontend/types/types"
+import { Bid, CreateBidInput, SafeUser } from "apps/frontend/types/types"
+import { AuthStoreService } from "../../../services/user-auth/auth-store.service"
 
 @Component({
   selector: "app-bids",
@@ -38,12 +38,14 @@ export class BidsComponent implements OnInit {
       this.maxPrice = this.productPrice
       this.fetchBids()
     }
+    console.log("Current user:", this.currentUser)
   }
 
   fetchBids(): void {
     this.loading = true
     this.bidsFacade.getBidsByProduct(this.productId).subscribe({
       next: (bids) => {
+        console.log("Bids:", bids)
         this.bids = bids.sort((a, b) => b.amount - a.amount)
         if (this.bids.length > 0) {
           this.maxPrice = Math.max(this.productPrice, this.bids[0].amount)
@@ -64,12 +66,9 @@ export class BidsComponent implements OnInit {
     const user = this.authFacade.getUser()
     if (!user) return
 
-    const payload: CreateBidPayload = {
-      productId: this.productId,
+    const payload: CreateBidInput = {
+      id: this.productId,
       amount: this.newBidAmount,
-      userId: user.id,
-      userName: user.email,
-      avatar: user.avatar ?? "assets/avatars/default.png",
     }
 
     this.bidsFacade.createBid(payload).subscribe({

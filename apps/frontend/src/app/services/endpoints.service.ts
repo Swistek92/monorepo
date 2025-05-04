@@ -16,10 +16,6 @@ export class EndpointsService {
     return `${this.BASE_URL}/auth/refresh`
   }
 
-  me(): string {
-    return `${this.BASE_URL}/auth/me`
-  }
-
   logout(): string {
     return `${this.BASE_URL}/auth/logout`
   }
@@ -38,18 +34,8 @@ export class EndpointsService {
   }
 
   // 🧾 BIDS
-  getBids(): string {
-    return `${this.BASE_URL}/bids`
-  }
 
   getBidById(id: number): string {
-    return `${this.BASE_URL}/bids/${id}`
-  }
-  createBid(): string {
-    return `${this.BASE_URL}/bids`
-  }
-
-  deleteBid(id: number): string {
     return `${this.BASE_URL}/bids/${id}`
   }
 }

@@ -1,6 +1,5 @@
 import { Component, ViewChild, OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import { PopupMode } from "@my-monorepo/consts"
 import { ProductComponent } from "../components/product/product.component"
 import { ProductFormComponent } from "../components/popup/product-form/product-form.component"
 import { Paginator, PaginatorModule } from "primeng/paginator"

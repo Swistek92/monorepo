@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core"
 import { Observable } from "rxjs"
 import { BidsService } from "./bids.service"
-import { Bid, CreateBidPayload } from "@my-monorepo/consts"
+import { Bid, CreateBidInput, CreateBidPayload, DeleteBidInput } from "apps/frontend/types/types"
+// import {  } from "@my-monorepo/consts"
 
 @Injectable({
   providedIn: "root",
@@ -15,7 +16,7 @@ export class BidsFacadeService {
   }
 
   // ➕ Dodaj nową ofertę
-  createBid(payload: CreateBidPayload): Observable<Bid> {
+  createBid(payload: CreateBidInput): Observable<Bid> {
     return this.bidsService.createBid(payload)
   }
 

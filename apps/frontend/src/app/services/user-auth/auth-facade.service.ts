@@ -1,14 +1,15 @@
 import { Injectable } from "@angular/core"
 import { Observable } from "rxjs"
 import { AuthService } from "./auth.service"
+import { Role } from "@my-monorepo/consts"
 import {
-  RefreshResponse,
   RegisterPayload,
-  Role,
+  AuthResponse,
+  LoginPayload,
+  RefreshResponse,
+  SafeUser,
   UpdateUserPayload,
-  UserRole,
-} from "@my-monorepo/consts"
-import { AuthResponse, LoginPayload, SafeUser } from "apps/frontend/types/types"
+} from "apps/frontend/types/types"
 
 @Injectable({
   providedIn: "root",
@@ -44,6 +45,7 @@ export class AuthFacadeService {
 
   // ✅ Set user in store
   setUser(user: SafeUser): void {
+    console.log("Setting user in store:", user)
     this.authService.setUser(user)
   }
 

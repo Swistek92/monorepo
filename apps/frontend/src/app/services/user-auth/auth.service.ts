@@ -2,16 +2,17 @@ import { Injectable } from "@angular/core"
 import { Observable } from "rxjs"
 import { ApiService } from "../../services/api.service"
 import { EndpointsService } from "../endpoints.service"
-import {
-  RefreshResponse,
-  RegisterPayload,
-  UpdateUserPayload,
-  AuthEndpoints,
-  UserEndpoints,
-} from "@my-monorepo/consts"
+import { AuthEndpoints, UserEndpoints } from "@my-monorepo/consts"
 import { AuthStoreService } from "./auth-store.service"
 import { TokenVerifyService } from "./token-verify.service"
-import { AuthResponse, LoginPayload, SafeUser } from "apps/frontend/types/types"
+import {
+  AuthResponse,
+  LoginPayload,
+  RefreshResponse,
+  RegisterPayload,
+  SafeUser,
+  UpdateUserPayload,
+} from "apps/frontend/types/types"
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
@@ -29,14 +30,19 @@ export class AuthService {
 
   autoLogin(): void {
     const token = this.getAccessToken()
+    console.log("🔑 Auto-login token:", token)
     if (!token) return
 
     this.me().subscribe({
       next: (user) => {
+        console.log("🔑 Auto-login user:", user)
         this.setUser(user) // ✅ używamy metody setUser
         console.log("🔓 Zalogowany użytkownik:", user)
       },
-      error: () => this.logout(),
+      error: () => {
+        console.log("❌ Token wygasł lub niepoprawny")
+        this.logout()
+      },
     })
   }
 
@@ -55,7 +61,7 @@ export class AuthService {
   }
 
   me(): Observable<SafeUser> {
-    return this.api.get<SafeUser>(this.endpoints.me(), {})
+    return this.api.get<SafeUser>(UserEndpoints.me(), {})
   }
 
   logout(): void {

@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core"
-import { PopupMode } from "@my-monorepo/consts"
 import { ClothesFacadeService } from "./products/products-facade.service"
-import { CreatedItem, CreateItem } from "../../../types/types"
+import { CreatedItem, CreateItem, PopupMode } from "../../../types/types"
 @Injectable({ providedIn: "root" })
 export class HomeService {
   selectedProduct: CreatedItem = this.emptyProduct()

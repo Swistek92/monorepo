@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import dbConfig from './config/db.config';
 import dbConfigProduction from './config/db.config.production';
 import { ItemsModule } from './items/items.module';
+import { BidsModule } from './bids/bids.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ItemsModule } from './items/items.module';
     UserModule,
     ItemsModule,
     AuthModule,
+    BidsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

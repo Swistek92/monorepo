@@ -4,4 +4,5 @@ import { basebackendUrl } from "@my-monorepo/consts"
 export const UserEndpoints = {
   login: () => `${basebackendUrl}/user/profile`,
   getAll: () => `${basebackendUrl}/user/all`,
+  me: () => `${basebackendUrl}/user/profile`,
 }

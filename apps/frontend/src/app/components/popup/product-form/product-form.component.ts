@@ -8,12 +8,11 @@ import {
   Validators,
 } from "@angular/forms"
 import { PopupControllerService } from "../../../services/popup/popup-controller.service"
-import { PopupMode } from "@my-monorepo/consts"
 import { ButtonModule } from "primeng/button"
 import { InputTextModule } from "primeng/inputtext"
 import { RatingModule } from "primeng/rating"
 import { PopupWrapperComponent } from "../popup-wrapper/popup-wrapper.component"
-import { CreateItem } from "../../../../../types/types"
+import { CreateItem, PopupMode } from "../../../../../types/types"
 interface ProductFormControls {
   name: FormControl
   price: FormControl

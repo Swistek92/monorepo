@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core"
 import { BehaviorSubject } from "rxjs"
-import { PopupMode } from "@my-monorepo/consts"
+import { PopupMode } from "apps/frontend/types/types"
 
 @Injectable({
   providedIn: "root",

@@ -12,8 +12,6 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
   const authService = inject(AuthService)
 
   const accessToken = authService.getAccessToken()
-  // console.log("Access token:", accessToken)
-  // do not attach token for login/refresh
   if (req.url.includes("/login") || req.url.includes("/refresh")) {
     return next(req)
   }
