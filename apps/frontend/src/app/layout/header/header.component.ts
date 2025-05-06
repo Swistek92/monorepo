@@ -5,6 +5,8 @@ import { RegisterComponent } from "../../components/popup/register/register.comp
 import { ButtonModule } from "primeng/button"
 import { AuthStoreService } from "../../services/user-auth/auth-store.service"
 import { AsyncPipe, NgIf } from "@angular/common"
+import { Role } from "@my-monorepo/consts"
+import { SafeUser } from "apps/frontend/types/types"
 
 @Component({
   selector: "app-header",
@@ -24,6 +26,10 @@ export class HeaderComponent {
 
   constructor() {
     this.initTheme()
+  }
+
+  isAdmin(user: SafeUser | null): boolean {
+    return !!user?.roles.includes(Role.ADMIN)
   }
 
   logout() {

@@ -15,12 +15,23 @@ async function bootstrap() {
     origin: "*",
   })
 
+  // ✅ Konfiguracja Swagger + Bearer Auth (JWT)
   const config = new DocumentBuilder()
-    .setTitle("Cats example")
-    .setDescription("The cats API description")
+    .setTitle("My API")
+    .setDescription("API documentation with JWT authentication")
     .setVersion("1.0")
-    .addTag("cats")
+    .addBearerAuth(
+      {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        name: "Authorization",
+        in: "header",
+      },
+      "access-token", // <- identyfikator dla @ApiBearerAuth()
+    )
     .build()
+
   const documentFactory = () => SwaggerModule.createDocument(app, config)
 
   SwaggerModule.setup("api", app, documentFactory)

@@ -1,6 +1,6 @@
 <div class="column home-wrapper">
-  <!-- ➕ Dodaj produkt (tylko np. admin) -->
   <button
+    *ngIf="isActive()"
     type="button"
     pButton
     icon="pi pi-plus"

@@ -8,13 +8,12 @@ import {
   Min,
   IsBoolean,
   IsArray,
-  IsDate,
+  IsDateString,
   IsInt,
   IsPositive,
   Max,
   IsEmail,
 } from "class-validator"
-import { z } from "zod"
 
 export class UpdateItemDto {
   @ApiPropertyOptional()
@@ -27,21 +26,37 @@ export class UpdateItemDto {
   @IsUrl()
   image?: string
 
-  @ApiPropertyOptional({ minimum: 0 })
+  @ApiPropertyOptional({ description: "Cena wywoławcza", minimum: 0 })
   @IsOptional()
   @IsNumber()
   @Min(0)
-  price?: number
+  startingPrice?: number
+
+  @ApiPropertyOptional({ description: "Cena kup teraz", minimum: 0 })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  buyNowPrice?: number
+
+  @ApiPropertyOptional({ description: "Ilość sztuk", minimum: 1 })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  quantity?: number
+
+  @ApiPropertyOptional({
+    type: String,
+    format: "date-time",
+    description: "Data zakończenia aukcji",
+  })
+  @IsOptional()
+  @IsDateString()
+  auctionEndDate?: string
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   description?: string
-
-  @ApiPropertyOptional({ type: String, format: "date-time" })
-  @IsOptional()
-  @IsDate()
-  createdAt?: Date
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -82,4 +97,9 @@ export class UpdateItemDto {
   @IsInt()
   @Min(0)
   views?: number
+
+  @ApiPropertyOptional({ required: false })
+  @IsOptional()
+  @IsEmail()
+  ownerEmail?: string
 }

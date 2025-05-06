@@ -68,9 +68,14 @@ export class ItemsService {
 
   private mapToDto = (item: Item): CreatedItemDto => {
     const { owner, ...rest } = item
+
     return {
       ...rest,
-      price: Number(item.price),
+      createdAt: item.createdAt.toISOString(),
+      startingPrice: Number(item.startingPrice),
+      buyNowPrice: item.buyNowPrice,
+      quantity: item.quantity,
+      auctionEndDate: item.auctionEndDate.toISOString(),
       ownerEmail: owner?.email || "",
     }
   }

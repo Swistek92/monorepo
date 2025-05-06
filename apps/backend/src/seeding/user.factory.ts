@@ -1,7 +1,12 @@
 import { faker } from "@faker-js/faker"
 import { setSeederFactory } from "typeorm-extension"
 import { User } from "../entities/user.entity"
-import { Role } from "@my-monorepo/consts"
+
+export enum Role {
+  ADMIN = "ADMIN",
+  MODERATOR = "MODERATOR",
+  USER = "USER",
+}
 
 export const UserFactory = setSeederFactory(User, (faker) => {
   const user = new User()

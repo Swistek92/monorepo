@@ -34,6 +34,10 @@ export class AuthStoreService {
     return this.userSubject.getValue()
   }
 
+  userIsActive(): boolean {
+    return this.getUser()?.isActive ?? false
+  }
+
   isLoggedIn(): boolean {
     return !!this.getUser()
   }

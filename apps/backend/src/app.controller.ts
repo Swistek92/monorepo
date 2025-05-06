@@ -6,11 +6,8 @@ import { ConfigService } from "@nestjs/config"
   path: "",
 })
 export class AppController {
-  constructor(private readonly appService: AppService, private configService: ConfigService) {}
-
-  @Get()
-  getHello(): string {
-    console.log("aasssssssssbbssa")
-    return this.configService.get("dbconfig.dev.type")
-  }
+  constructor(
+    private readonly appService: AppService,
+    private configService: ConfigService,
+  ) {}
 }

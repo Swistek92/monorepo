@@ -9,6 +9,8 @@ import { DialogModule } from "primeng/dialog"
 import { ClothesFacadeService } from "../services/products/products-facade.service"
 import { HomeService } from "../services/home-service"
 import { CreatedItem, CreateItem } from "../../../types/types"
+import { UserService } from "../../../../backend/src/user/user.service"
+import { AuthStoreService } from "../services/user-auth/auth-store.service"
 @Component({
   selector: "app-home",
   standalone: true,
@@ -33,7 +35,12 @@ export class HomeComponent implements OnInit {
   constructor(
     private clothesFacade: ClothesFacadeService,
     public homeCtrl: HomeService,
+    private auth: AuthStoreService,
   ) {}
+
+  isActive() {
+    return this.auth.userIsActive()
+  }
 
   ngOnInit() {
     this.fetchProducts(0, this.rows)

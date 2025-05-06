@@ -7,14 +7,19 @@ import {
   IsOptional,
   IsBoolean,
   IsArray,
-  IsDate,
   IsInt,
   IsPositive,
   Max,
   IsEmail,
+  IsDateString,
 } from "class-validator"
 
 export class CreatedItemDto {
+  @ApiProperty()
+  @IsInt()
+  @IsPositive()
+  id: number
+
   @ApiProperty()
   @IsString()
   name: string
@@ -23,18 +28,33 @@ export class CreatedItemDto {
   @IsUrl()
   image: string
 
-  @ApiProperty({ minimum: 0 })
+  @ApiProperty()
   @IsNumber()
   @Min(0)
-  price: number
+  startingPrice: number
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  buyNowPrice?: number
+
+  @ApiProperty()
+  @IsInt()
+  @Min(1)
+  quantity: number
+
+  @ApiProperty({ type: String, format: "date-time" })
+  @IsDateString()
+  auctionEndDate: string
 
   @ApiProperty()
   @IsString()
   description: string
 
   @ApiProperty({ type: String, format: "date-time" })
-  @IsDate()
-  createdAt: Date
+  @IsDateString()
+  createdAt: string
 
   @ApiProperty()
   @IsString()
@@ -71,13 +91,6 @@ export class CreatedItemDto {
   @IsInt()
   @Min(0)
   views?: number = 0
-
-  // 🔥 NOWE pola (z CreatedItemSchema):
-
-  @ApiProperty()
-  @IsInt()
-  @IsPositive()
-  id: number
 
   @ApiProperty({ required: false })
   @IsOptional()

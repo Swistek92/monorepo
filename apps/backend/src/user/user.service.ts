@@ -8,64 +8,62 @@ import { SafeUserDto } from "../auth/dto"
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(User) private UserRepo: Repository<User>) {}
+  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
   async updateHashedRefreshToken(userId: number, hashedRefreshToken: string) {
-    return await this.UserRepo.update({ id: userId }, { hashedRefreshToken })
+    return await this.userRepo.update({ id: userId }, { hashedRefreshToken })
   }
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const existing = await this.findByEmail(createUserDto.email)
     if (existing) throw new ConflictException("Email is already registered")
 
-    const user = this.UserRepo.create(createUserDto)
-    return await this.UserRepo.save(user)
+    const user = this.userRepo.create(createUserDto)
+    return await this.userRepo.save(user)
   }
 
   async findByEmail(email: string) {
-    const user = await this.UserRepo.findOne({
-      where: {
-        email,
-      },
-    })
-    return user
+    return this.userRepo.findOne({ where: { email } })
   }
 
   async findAll(): Promise<User[]> {
-    return await this.UserRepo.find()
+    return await this.userRepo.find()
   }
 
   async findOne(id: number) {
-    return this.UserRepo.findOne({
+    return this.userRepo.findOne({
       where: { id },
       relations: ["favorites", "bids", "ownedItems", "reviews"],
     })
   }
 
-  async handleActivate(id: number, updateUserDto: UpdateUserDto) {
+  async handleActivate(id: number): Promise<User> {
     const existingUser = await this.findOne(+id)
     if (!existingUser) throw new NotFoundException()
 
     existingUser.isActive = !existingUser.isActive
 
-    return await this.UserRepo.save(existingUser)
+    return await this.userRepo.save(existingUser)
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<SafeUserDto> {
-    const user = await this.UserRepo.findOne({ where: { id } })
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.userRepo.findOne({ where: { id } })
     if (!user) throw new NotFoundException(`User with ID ${id} not found`)
 
-    Object.assign(user, updateUserDto)
-    const updated = await this.UserRepo.save(user)
+    if (updateUserDto.email && updateUserDto.email !== user.email) {
+      const existing = await this.findByEmail(updateUserDto.email)
+      if (existing) throw new ConflictException("Email is already taken")
+    }
 
-    return this.sanitizeUser(updated) as SafeUserDto
+    Object.assign(user, updateUserDto)
+    return await this.userRepo.save(user)
   }
 
   async remove(id: number): Promise<{ message: string }> {
-    const user = await this.UserRepo.findOne({ where: { id } })
+    const user = await this.userRepo.findOne({ where: { id } })
     if (!user) throw new NotFoundException(`User with ID ${id} not found`)
 
-    await this.UserRepo.remove(user)
+    await this.userRepo.remove(user)
     return { message: `User with ID ${id} removed successfully` }
   }
 
