@@ -38,15 +38,21 @@ export class DashboardComponent implements OnInit {
   }
 
   toggleActivation(user: SafeUser): void {
-    const updated = { ...user, isActive: !user.isActive }
+    const originalState = user.isActive
+    const updated = { ...user, isActive: !originalState }
 
-    this.authFacade.updateUser(user.id, updated).subscribe({
+    // Optymistyczna zmiana UI
+    const index = this.users.findIndex((u) => u.id === user.id)
+    if (index !== -1) this.users[index] = updated
+
+    this.authFacade.handleActivUser(user.id).subscribe({
       next: (updatedUser) => {
-        const index = this.users.findIndex((u) => u.id === user.id)
         this.users[index] = updatedUser
       },
       error: (err) => {
         console.error("Update failed", err)
+        // Rollback w razie błędu
+        this.users[index] = { ...user, isActive: originalState }
       },
     })
   }

@@ -5,9 +5,11 @@ import { TypeOrmModule } from "@nestjs/typeorm"
 import { Bid } from "../entities/bid.entity"
 import { APP_GUARD } from "@nestjs/core"
 import { JwtAuthGuard } from "../auth/guards/jwt-auth/jwt-auth.guard"
+import { UserService } from "../user/user.service"
+import { UserModule } from "../user/user.module"
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Bid])],
+  imports: [TypeOrmModule.forFeature([Bid]), UserModule],
 
   controllers: [BidsController],
   providers: [

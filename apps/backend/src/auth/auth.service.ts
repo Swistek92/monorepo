@@ -33,7 +33,12 @@ export class AuthService {
   }
 
   async login(user: SafeUserDto) {
-    const { accessToken, refreshToken } = await this.generateTokens(user)
+    const payload: AuthJwtPayload = {
+      sub: user.id,
+      email: user.email,
+      roles: user.roles,
+    }
+    const { accessToken, refreshToken } = await this.generateTokens(payload)
     const hashedRefreshToken = await argon2.hash(refreshToken)
     await this.userService.updateHashedRefreshToken(user.id, hashedRefreshToken)
 
@@ -44,27 +49,20 @@ export class AuthService {
     }
   }
 
-  async generateTokens(user: SafeUserDto) {
-    const payload: AuthJwtPayload = { sub: user.id, user }
-    const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(payload),
-      this.jwtService.signAsync(payload, this.refreshTokenConfig),
-    ])
-    return {
-      accessToken,
-      refreshToken,
+  async register(userDto: CreateUserDto) {
+    const createdUser = await this.userService.create(userDto)
+
+    const { password, hashedRefreshToken, ...safeUser } = createdUser
+
+    const payload: AuthJwtPayload = {
+      sub: createdUser.id,
+      email: createdUser.email,
+      roles: createdUser.roles,
     }
-  }
+    const { accessToken, refreshToken } = await this.generateTokens(payload)
 
-  async refreshToken(userId: number) {
-    const user = await this.userService.findOne(userId)
-    if (!user) throw new UnauthorizedException("User not found")
-
-    const { password: _p, hashedRefreshToken: _h, ...safeUser } = user
-
-    const { accessToken, refreshToken } = await this.generateTokens(safeUser)
-    const hashedRefreshToken = await argon2.hash(refreshToken)
-    await this.userService.updateHashedRefreshToken(userId, hashedRefreshToken)
+    const hashed = await argon2.hash(refreshToken)
+    await this.userService.updateHashedRefreshToken(createdUser.id, hashed)
 
     return {
       user: safeUser,
@@ -73,14 +71,38 @@ export class AuthService {
     }
   }
 
-  async validateRefreshToken(userId: number, refreshToken: string) {
+  async generateTokens(payload: AuthJwtPayload) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload),
+      this.jwtService.signAsync(payload, this.refreshTokenConfig),
+    ])
+
+    return { accessToken, refreshToken }
+  }
+
+  async refreshToken(userId: number) {
     const user = await this.userService.findOne(userId)
+    if (!user) throw new UnauthorizedException("User not found")
+    const payload: AuthJwtPayload = { sub: user.id, email: user.email, roles: user.roles }
+
+    const { accessToken, refreshToken } = await this.generateTokens(payload)
+    const hashedRefreshToken = await argon2.hash(refreshToken)
+    await this.userService.updateHashedRefreshToken(userId, hashedRefreshToken)
+
+    return {
+      accessToken,
+      refreshToken,
+    }
+  }
+
+  async validateRefreshToken(payload: AuthJwtPayload, refreshToken: string) {
+    const user = await this.userService.findOne(payload.sub)
     if (!user || !user.hashedRefreshToken) throw new UnauthorizedException("Invalid Refresh Token")
 
     const refreshTokenMatches = await argon2.verify(user.hashedRefreshToken, refreshToken)
     if (!refreshTokenMatches) throw new UnauthorizedException("Invalid Refresh Token")
 
-    return { id: userId }
+    return payload
   }
 
   async signOut(userId: number) {

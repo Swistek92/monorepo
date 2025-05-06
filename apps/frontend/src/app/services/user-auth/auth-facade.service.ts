@@ -35,6 +35,7 @@ export class AuthFacadeService {
 
   // 🔄 Refresh token
   refreshToken(): Observable<RefreshResponse> {
+    console.log("Refreshing token...")
     return this.authService.refreshToken()
   }
 
@@ -121,5 +122,8 @@ export class AuthFacadeService {
 
   isOwner(id: number): boolean {
     return this.authService.getUser()?.id === id
+  }
+  handleActivUser(id: number): Observable<SafeUser> {
+    return this.authService.handleActivUser(id)
   }
 }

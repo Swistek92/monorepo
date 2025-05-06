@@ -1,8 +1,7 @@
 import { Injectable } from "@angular/core"
 import { Observable } from "rxjs"
 import { ApiService } from "../../services/api.service"
-import { EndpointsService } from "../endpoints.service"
-import { AuthEndpoints, UserEndpoints } from "@my-monorepo/consts"
+import { UserEndpoints } from "@my-monorepo/consts"
 import { AuthStoreService } from "./auth-store.service"
 import { TokenVerifyService } from "./token-verify.service"
 import {
@@ -18,7 +17,6 @@ import {
 export class AuthService {
   constructor(
     private api: ApiService,
-    private endpoints: EndpointsService,
     private authStore: AuthStoreService,
     private tokenVerify: TokenVerifyService,
   ) {}
@@ -30,14 +28,11 @@ export class AuthService {
 
   autoLogin(): void {
     const token = this.getAccessToken()
-    console.log("🔑 Auto-login token:", token)
     if (!token) return
 
     this.me().subscribe({
       next: (user) => {
-        console.log("🔑 Auto-login user:", user)
         this.setUser(user) // ✅ używamy metody setUser
-        console.log("🔓 Zalogowany użytkownik:", user)
       },
       error: () => {
         console.log("❌ Token wygasł lub niepoprawny")
@@ -47,17 +42,29 @@ export class AuthService {
   }
 
   login(payload: LoginPayload): Observable<AuthResponse> {
-    const usr = this.api.post<AuthResponse>(AuthEndpoints.login(), payload, {})
+    const usr = this.api.post<AuthResponse>(UserEndpoints.login(), payload, {})
     return usr
   }
 
   register(payload: RegisterPayload): Observable<{ message: string }> {
-    return this.api.post<{ message: string }>(this.endpoints.register(), payload, {})
+    return this.api.post<{ message: string }>(UserEndpoints.register(), payload, {})
+  }
+
+  handleActivUser(id: number) {
+    return this.api.post(UserEndpoints.handleActivUser(id), {}, {}) as Observable<SafeUser>
   }
 
   refreshToken(): Observable<RefreshResponse> {
     const refreshToken = this.getRefreshToken()
-    return this.api.post<RefreshResponse>(this.endpoints.refresh(), { refreshToken }, {})
+    return this.api.post<RefreshResponse>(
+      UserEndpoints.refreshToken(),
+      {}, // pusty body
+      {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      },
+    )
   }
 
   me(): Observable<SafeUser> {
@@ -65,7 +72,7 @@ export class AuthService {
   }
 
   logout(): void {
-    this.api.post(this.endpoints.logout(), {}, {}).subscribe({
+    this.api.post(UserEndpoints.signout(), {}, {}).subscribe({
       next: () => this.clearSession(),
       error: () => this.clearSession(),
     })
@@ -78,12 +85,12 @@ export class AuthService {
 
   // ADMIN
   updateUser(id: number, data: UpdateUserPayload): Observable<SafeUser> {
-    return this.api.put<SafeUser>(this.endpoints.updateUser(id), data, {})
+    return this.api.put<SafeUser>(UserEndpoints.update(id), data, {})
   }
 
   deleteUser(id: number): Observable<{ message: string }> {
     console.log("Deleting user with ID:", id)
-    return this.api.delete<{ message: string }>(this.endpoints.deleteUser(id), {})
+    return this.api.delete<{ message: string }>(UserEndpoints.delete(id), {})
   }
 
   getAllUsers(): Observable<SafeUser[]> {

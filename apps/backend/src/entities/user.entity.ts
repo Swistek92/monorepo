@@ -43,7 +43,10 @@ export class User {
   @Column({ default: false })
   verified: boolean
 
-  @Column({ nullable: true })
+  @Column({
+    nullable: true,
+    default: "https://rapidapi-prod-apis.s3.amazonaws.com/b42aa17d-8ae0-4a28-b29f-587af5454390.png",
+  })
   avatar: string
 
   @CreateDateColumn()

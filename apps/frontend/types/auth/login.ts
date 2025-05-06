@@ -67,6 +67,7 @@ export type LoginPayload = {
 
 export type RefreshResponse = {
   accessToken: string
+  refreshToken: string
 }
 export type RegisterPayload = {
   email: string

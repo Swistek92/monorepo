@@ -3,5 +3,6 @@ import { Role } from "../enums/role.enum"
 
 export type AuthJwtPayload = {
   sub: number
-  user: SafeUserDto
+  email: string
+  roles: Role[]
 }

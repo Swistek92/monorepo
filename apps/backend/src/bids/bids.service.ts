@@ -11,6 +11,7 @@ export class BidsService {
   constructor(@InjectRepository(Bid) private bidRepo: Repository<Bid>) {}
 
   async createBid(dto: CreateBidDto, user: SafeUserDto): Promise<Bid> {
+    console.log(user)
     const bid = this.bidRepo.create({
       amount: dto.amount,
       product: { id: dto.id },

@@ -86,6 +86,7 @@ export class UserDto {
   })
   reviews?: Review[]
 }
+
 export class SafeUserDto {
   @ApiProperty({ example: 1, description: "ID użytkownika" })
   id: number

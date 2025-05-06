@@ -14,11 +14,9 @@ import { LocalAuthGuard } from "./guards/local-auth/local-auth.guard"
 import { RefreshAuthGuard } from "./guards/refresh-auth/refresh-auth.guard"
 import { JwtAuthGuard } from "./guards/jwt-auth/jwt-auth.guard"
 import { Public } from "./decorators/public.decorator"
-import { GoogleAuthGuard } from "./guards/google-auth/google-auth.guard"
-// import { Role } from "./enums/role.enum"
-import { Roles } from "./decorators/roles.decorator"
 import { ApiBody, ApiOkResponse } from "@nestjs/swagger"
 import { LoginDto, LoginResponseDto } from "./dto"
+import { CreateUserDto } from "../user/dto/create-user.dto"
 
 @Public()
 @Controller("auth")
@@ -31,6 +29,13 @@ export class AuthController {
   @Post("login")
   async login(@Request() req) {
     return this.authService.login(req.user)
+  }
+
+  @Post("register")
+  async register(@Request() req: Request & { body: CreateUserDto }) {
+    console.log(req.body)
+    const registeruser = req.body as CreateUserDto
+    return this.authService.register(registeruser)
   }
 
   @UseGuards(RefreshAuthGuard)
