@@ -31,18 +31,16 @@ export class Item {
       "https://media.sketchfab.com/models/4bdae44017424870b1759db195618576/thumbnails/332515a54cb242948ab45fe368a63e69/7ee040f9cb6b4f12a383ea299bc9b0bf.jpeg",
   })
   image: string
-
-  @Column("decimal")
-  startingPrice: number // cena wywoławcza
+  @Column({ type: "float", default: 0 })
+  startingPrice: number
 
   @Column("decimal", { nullable: true })
   buyNowPrice: number | null // cena kup teraz (opcjonalna)
 
   @Column("int", { default: 1 })
   quantity: number // liczba sztuk dostępnych
-
-  @Column({ type: "timestamp" })
-  auctionEndDate: Date // data zakończenia licytacji
+  @Column({ default: () => "NOW() + interval '7 days'" })
+  auctionEndDate: Date
 
   @ManyToOne(() => User, (user) => user.ownedItems)
   @JoinColumn({ name: "ownerId" })

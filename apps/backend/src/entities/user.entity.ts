@@ -10,10 +10,16 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm"
 import * as bcrypt from "bcrypt"
-import { Role } from "@my-monorepo/consts"
+// import { Role } from "@my-monorepo/consts"
 import { Item } from "./item.entity"
 import { Bid } from "./bid.entity"
 import { Review } from "./rewiew.entity"
+
+export enum Role {
+  ADMIN = "ADMIN",
+  MODERATOR = "MODERATOR",
+  USER = "USER",
+}
 
 @Entity()
 export class User {

@@ -2,9 +2,14 @@ import { DataSource } from "typeorm"
 import { Seeder, SeederFactoryManager } from "typeorm-extension"
 import { User } from "../entities/user.entity"
 import { Item } from "../entities/item.entity"
-import { Role } from "@my-monorepo/consts"
+// import { Role } from "@my-monorepo/consts"
 import { faker } from "@faker-js/faker"
 
+export enum Role {
+  ADMIN = "ADMIN",
+  MODERATOR = "MODERATOR",
+  USER = "USER",
+}
 export class MainSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
     const userRepo = dataSource.getRepository(User)
@@ -28,7 +33,7 @@ export class MainSeeder implements Seeder {
         email: "newuser@example.com",
         password: "secret123",
         name: "New User",
-        role: [Role.USER],
+        roles: [Role.USER],
         isActive: true,
         verified: false,
         avatar: "assets/avatars/default.png",
