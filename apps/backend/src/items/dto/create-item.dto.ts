@@ -1,4 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger"
+import { ApiHideProperty, ApiProperty } from "@nestjs/swagger"
+import { Transform, Type } from "class-transformer"
 import {
   IsString,
   IsNotEmpty,
@@ -8,6 +9,7 @@ import {
   IsArray,
   IsDateString,
   IsInt,
+  IsDate,
 } from "class-validator"
 
 export class CreateItemDto {
@@ -25,6 +27,10 @@ export class CreateItemDto {
   @IsString()
   image?: string
 
+  @ApiProperty({ description: "Czy jest to licytacja (true) czy kup teraz (false)", default: true })
+  @IsBoolean()
+  isAuction!: boolean
+
   @ApiProperty({ description: "Cena wywoławcza" })
   @IsNumber()
   startingPrice!: number
@@ -34,12 +40,20 @@ export class CreateItemDto {
   @IsNumber()
   buyNowPrice?: number
 
+  @IsInt()
+  @Type(() => Number)
+  @ApiHideProperty() // 👈 Ukrywa w Swaggerze
+  ownerId: number
+
   @ApiProperty({ description: "Ilość sztuk" })
   @IsInt()
   quantity!: number
 
-  @ApiProperty({ description: "Data zakończenia aukcji", example: "2025-06-30T23:59:00.000Z" })
-  @IsDateString()
+  @IsDate()
+  @Type(() => Date)
+  @Transform(({ value }) =>
+    value ? new Date(value) : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  )
   auctionEndDate!: Date
 
   @ApiProperty()
@@ -66,10 +80,6 @@ export class CreateItemDto {
   @IsString()
   @IsNotEmpty()
   location!: string
-
-  @ApiProperty()
-  @IsInt()
-  ownerId!: number
 
   @ApiProperty({ required: false, default: 0 })
   @IsOptional()

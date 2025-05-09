@@ -20,14 +20,18 @@ export class ItemsService {
   ) {}
 
   async create(createItemDto: CreateItemDto): Promise<CreatedItemDto> {
+    console.log("createItemDto111111111", createItemDto)
     const newItem = this.itemRepo.create(createItemDto)
     const saved = await this.itemRepo.save(newItem)
-    return this.mapToDto(
-      await this.itemRepo.findOne({
-        where: { id: saved.id },
-        relations: ["owner"],
-      }),
-    )
+    if (!saved) throw new NotFoundException("Item not found")
+    console.log("saved", saved)
+
+    const fullItem = await this.itemRepo.findOne({
+      where: { id: saved.id },
+      relations: ["owner"],
+    })
+    console.log("fullItem", fullItem)
+    return this.mapToDto(fullItem)
   }
 
   async findAll(paginationDTO: PaginationDTO): Promise<GetAllItemsResponseDto> {

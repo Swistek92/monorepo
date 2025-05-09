@@ -29,6 +29,10 @@ export class CreatedItemDto {
   image: string
 
   @ApiProperty()
+  @IsBoolean()
+  isAuction: boolean
+
+  @ApiProperty()
   @IsNumber()
   @Min(0)
   startingPrice: number

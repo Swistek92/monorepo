@@ -17,8 +17,8 @@ export class Item {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({ default: 0 })
-  rating: number | null
+  @Column({ type: "float", default: 0 })
+  rating: number
 
   @Column({ default: 0 })
   views: number
@@ -36,6 +36,9 @@ export class Item {
 
   @Column("decimal", { nullable: true })
   buyNowPrice: number | null // cena kup teraz (opcjonalna)
+
+  @Column({ default: true })
+  isAuction: boolean
 
   @Column("int", { default: 1 })
   quantity: number // liczba sztuk dostępnych

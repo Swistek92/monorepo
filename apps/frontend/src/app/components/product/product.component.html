@@ -6,7 +6,7 @@
   <h2 class="title">{{ product.name | truncateName: 10 : ".." }}</h2>
   <div class="row gap-05">
     <span class="price-label">Price:</span>
-    <span class="price">{{ product.price | price }}</span>
+    <span class="price">{{ product.startingPrice | price }}</span>
   </div>
   <p-rating [(ngModel)]="product.rating" [readonly]="true" iconCancelClass="hidden" />
 

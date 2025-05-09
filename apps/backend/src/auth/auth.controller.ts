@@ -17,6 +17,7 @@ import { Public } from "./decorators/public.decorator"
 import { ApiBody, ApiOkResponse } from "@nestjs/swagger"
 import { LoginDto, LoginResponseDto } from "./dto"
 import { CreateUserDto } from "../user/dto/create-user.dto"
+import { AuthJwtPayload } from "./types/auth-jwtPayload"
 
 @Public()
 @Controller("auth")
@@ -46,8 +47,8 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post("signout")
-  signOut(@Req() req) {
-    this.authService.signOut(req.user.id)
+  signOut(@Req() req: Request & { user: AuthJwtPayload }) {
+    return this.authService.signOut(req.user.sub)
   }
 
   // @Public()

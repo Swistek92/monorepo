@@ -53,8 +53,16 @@ export class ItemsController {
   @ApiBody({ type: CreateItemDto })
   @ApiResponse({ status: 201, description: "Item created successfully.", type: CreatedItemDto })
   @ApiResponse({ status: 401, description: "Unauthorized" })
-  async create(@Body() createItemDto: CreateItemDto): Promise<CreatedItemDto> {
-    return this.itemsService.create(createItemDto)
+  async create(
+    @Body() createItemDto,
+    @Req() req: Request & { user: AuthJwtPayload },
+  ): Promise<CreatedItemDto> {
+    console.log("item controller called")
+    const userid = Number(req.user.sub)
+    const item = { ...createItemDto, ownerId: userid } as CreateItemDto
+    return this.itemsService.create(item)
+    // console.log("created")
+    // return aaa
   }
 
   /**

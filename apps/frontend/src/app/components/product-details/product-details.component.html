@@ -4,11 +4,11 @@
 
     <div class="column gap-05">
       <p><strong>ID:</strong> {{ p.id }}</p>
-      <p><strong>Initial price:</strong> {{ p.price | currency }}</p>
+      <!-- <p><strong>Initial price:</strong> {{ p | currency }}</p> -->
       <p><strong>Rating:</strong> {{ p.rating }} / 5 ⭐</p>
-      <p><strong>Owner:</strong> {{ p.ownerEmail }} (ID: {{ p.ownerId }})</p>
+      <!-- <p><strong>Owner:</strong> {{ p.ownerEmail }} (ID: {{ p.ownerId }})</p> -->
       <p><strong>Description:</strong> {{ p.description }}</p>
-      <p><strong>Created at:</strong> {{ p.createdAt | date : "medium" }}</p>
+      <p><strong>Created at:</strong> {{ p.createdAt | date: "medium" }}</p>
       <p><strong>Category:</strong> {{ p.category }}</p>
 
       <p>
@@ -30,4 +30,4 @@
 
 <!-- 💬 Sekcja licytacji -->
 <!-- <app-bids *ngIf="product" [productId]="product.id" [productPrice]=product.price></app-bids> -->
-<app-bids *ngIf="product" [productId]="product.id" [productPrice]="+product.price"></app-bids>
+<!-- <app-bids *ngIf="product" [productId]="product.id" [productPrice]="+product.price"></app-bids> -->

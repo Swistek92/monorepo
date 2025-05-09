@@ -11,6 +11,7 @@ import { HomeService } from "../services/home-service"
 import { CreatedItem, CreateItem } from "../../../types/types"
 import { UserService } from "../../../../backend/src/user/user.service"
 import { AuthStoreService } from "../services/user-auth/auth-store.service"
+import { lastValueFrom } from "rxjs"
 @Component({
   selector: "app-home",
   standalone: true,
@@ -58,15 +59,29 @@ export class HomeComponent implements OnInit {
     })
   }
 
-  onPopupConfirm(product: CreateItem) {
-    this.homeCtrl.confirmPopup(product, () => {
+  async onPopupConfirm(product: CreateItem) {
+    console.log("onPopupConfirm", product)
+
+    if (!product.name) {
+      return
+    }
+    try {
+      await lastValueFrom(this.homeCtrl.confirmPopup(product))
+      this.homeCtrl.resetProductCache()
       this.fetchProducts(0, this.rows)
       this.resetPaginator()
-    })
+      this.homeCtrl.cancelPopup()
+    } catch (err) {
+      console.error("Saving product failed:", err)
+    }
   }
 
   resetPaginator() {
-    this.paginator?.changePage(0)
+    if (this.paginator?.getPage() !== 0) {
+      this.paginator?.changePage(0)
+    } else {
+      this.fetchProducts(0, this.rows) // tylko jeśli już jesteś na stronie 0
+    }
   }
 
   deleteProduct(id: number) {

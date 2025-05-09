@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { ApiPropertyOptional } from "@nestjs/swagger"
 import {
   IsString,
@@ -12,8 +11,8 @@ import {
   IsInt,
   IsPositive,
   Max,
-  IsEmail,
 } from "class-validator"
+import { Type } from "class-transformer"
 
 export class UpdateItemDto {
   @ApiPropertyOptional()
@@ -28,18 +27,21 @@ export class UpdateItemDto {
 
   @ApiPropertyOptional({ description: "Cena wywoławcza", minimum: 0 })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
   startingPrice?: number
 
   @ApiPropertyOptional({ description: "Cena kup teraz", minimum: 0 })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
   buyNowPrice?: number
 
   @ApiPropertyOptional({ description: "Ilość sztuk", minimum: 1 })
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(1)
   quantity?: number
@@ -81,12 +83,14 @@ export class UpdateItemDto {
 
   @ApiPropertyOptional()
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @IsPositive()
   ownerId?: number
 
   @ApiPropertyOptional({ minimum: 0, maximum: 5 })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
   @Max(5)
@@ -94,12 +98,8 @@ export class UpdateItemDto {
 
   @ApiPropertyOptional({ minimum: 0 })
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(0)
   views?: number
-
-  @ApiPropertyOptional({ required: false })
-  @IsOptional()
-  @IsEmail()
-  ownerEmail?: string
 }

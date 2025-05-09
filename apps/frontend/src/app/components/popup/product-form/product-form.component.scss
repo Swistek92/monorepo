@@ -1,3 +1,46 @@
-// input.ng-invalid {
-//   border: 1px solid red;
-// }
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  label {
+    display: block;
+    font-weight: 500;
+    font-size: 0.875rem; // ~14px
+    margin-bottom: 0.25rem;
+  }
+
+  input,
+  textarea,
+  .p-inputtext,
+  .p-calendar,
+  .p-calendar input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .p-radioButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .radio-group {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .form-error {
+    color: #f87171; // Tailwind red-400
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+}
