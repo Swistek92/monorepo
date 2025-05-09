@@ -60,13 +60,13 @@ export class HomeComponent implements OnInit {
   }
 
   async onPopupConfirm(product: CreateItem) {
-    console.log("onPopupConfirm", product)
+    // console.log("onPopupConfirm", product)
 
-    if (!product.name) {
-      return
-    }
+    // if (!product.name) {
+    //   return
+    // }
     try {
-      await lastValueFrom(this.homeCtrl.confirmPopup(product))
+      await this.homeCtrl.confirmAddPopup(product)
       this.homeCtrl.resetProductCache()
       this.fetchProducts(0, this.rows)
       this.resetPaginator()
