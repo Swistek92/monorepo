@@ -21,6 +21,11 @@ jobs:
         with:
           project_id: ${{ secrets.GCP_PROJECT }}
 
+      - name: Install gke-gcloud-auth-plugin
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+
       - name: Debug GCP account & config
         run: |
           echo "🔍 gcloud auth list:"
