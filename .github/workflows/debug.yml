@@ -1,0 +1,64 @@
+name: GKE Debug Deployment
+
+on:
+  workflow_dispatch: # pozwala uruchomić ręcznie z GitHub GUI
+
+jobs:
+  debug-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT }}
+
+      - name: Install gke-gcloud-auth-plugin (via gcloud SDK)
+        run: |
+          echo "🔧 Installing gke-gcloud-auth-plugin..."
+          sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates gnupg
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | \
+            sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
+            sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+          sudo apt-get update && sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+
+      - name: Debug GCP account & config
+        run: |
+          echo "🔍 gcloud auth list:"
+          gcloud auth list
+
+          echo "🧾 gcloud config list:"
+          gcloud config list
+
+      - name: Configure kubectl
+        run: |
+          echo "🔧 Fetching cluster credentials..."
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} \
+            --region ${{ secrets.GKE_REGION }} \
+            --project ${{ secrets.GCP_PROJECT }}
+
+      - name: Get Deployments and Pods
+        run: |
+          echo "📦 Available deployments:"
+          kubectl get deployments
+
+          echo "🐳 Running pods:"
+          kubectl get pods
+
+      - name: (Optional) Test image update – no push
+        run: |
+          echo "🚀 Setting image to latest again (no actual push)"
+          kubectl set image deployment/${{ secrets.GKE_DEPLOYMENT_NAME }} \
+            backend=swistek/my-backend:latest || true
+
+          echo "🕒 Rollout status:"
+          kubectl rollout status deployment/${{ secrets.GKE_DEPLOYMENT_NAME }} || true
