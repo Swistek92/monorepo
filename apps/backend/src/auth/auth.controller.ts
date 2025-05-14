@@ -48,6 +48,13 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post("signout")
   signOut(@Req() req: Request & { user: AuthJwtPayload }) {
+    if (!req.user) {
+      return {
+        statusCode: HttpStatus.UNAUTHORIZED,
+        message: "Unauthorized",
+        error: "Unauthorized",
+      }
+    }
     return this.authService.signOut(req.user.sub)
   }
 
