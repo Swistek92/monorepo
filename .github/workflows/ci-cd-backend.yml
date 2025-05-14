@@ -73,6 +73,11 @@ jobs:
             --region ${{ secrets.GKE_REGION }} \
             --project ${{ secrets.GCP_PROJECT }}
 
+      - name: Force new rollout by patching annotation
+        run: |
+          kubectl patch deployment ${{ secrets.GKE_DEPLOYMENT_NAME }} \
+            -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"force-redeploy\":\"$(date +%s)\"}}}}"
+
       - name: Deploy updated image to GKE
         run: |
           kubectl set image deployment/${{ secrets.GKE_DEPLOYMENT_NAME }} \
