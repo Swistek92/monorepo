@@ -52,7 +52,7 @@ export class AuthController {
       return {
         statusCode: HttpStatus.UNAUTHORIZED,
         message: "Unauthorized",
-        error: "Unauthorized",
+        error: "Unauthorized1",
       }
     }
     return this.authService.signOut(req.user.sub)
