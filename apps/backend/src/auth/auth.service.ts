@@ -26,7 +26,7 @@ export class AuthService {
 
     const isPasswordMatch = await compare(password, user.password)
     if (!isPasswordMatch) throw new UnauthorizedException("Invalid credentials")
-    if (!user.isActive) throw new UnauthorizedException("User is not active!")
+    if (!user.isActive) throw new UnauthorizedException("User is not actiive!")
 
     const { password: _p, hashedRefreshToken: _h, ...safeUser } = user
     return safeUser // Zwracamy bezpiecznego usera
