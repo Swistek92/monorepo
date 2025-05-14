@@ -9,6 +9,7 @@ import {
   CreatedItemDto,
   GetAllItemsResponseDto,
   DeleteItemResponseDto,
+  ItemFilterDto,
 } from "./dto"
 import { DEFAULT_PAGE_SIZE } from "@my-monorepo/consts"
 
@@ -34,14 +35,57 @@ export class ItemsService {
     return this.mapToDto(fullItem)
   }
 
-  async findAll(paginationDTO: PaginationDTO): Promise<GetAllItemsResponseDto> {
+  async findAll(
+    paginationDTO: PaginationDTO,
+    filters: ItemFilterDto,
+  ): Promise<GetAllItemsResponseDto> {
     const { skip = 0, limit } = paginationDTO
     const take = typeof limit === "number" && limit > 0 ? limit : DEFAULT_PAGE_SIZE
-    const [items, total] = await this.itemRepo.findAndCount({
-      skip,
-      take,
-      relations: ["owner"], // 👈 dołącz relację owner
-    })
+
+    const query = this.itemRepo
+      .createQueryBuilder("item")
+      .leftJoinAndSelect("item.owner", "owner")
+      .skip(skip)
+      .take(take)
+
+    if (filters.name) {
+      query.andWhere("item.name ILIKE :name", { name: `%${filters.name}%` })
+    }
+
+    if (filters.category) {
+      query.andWhere("item.category = :category", { category: filters.category })
+    }
+
+    if (filters.isAuction !== undefined) {
+      query.andWhere("item.isAuction = :isAuction", { isAuction: filters.isAuction })
+    }
+
+    if (filters.available !== undefined) {
+      query.andWhere("item.available = :available", { available: filters.available })
+    }
+
+    if (filters.location) {
+      query.andWhere("item.location ILIKE :location", { location: `%${filters.location}%` })
+    }
+
+    if (filters.priceMin !== undefined) {
+      query.andWhere("item.startingPrice >= :priceMin", { priceMin: filters.priceMin })
+    }
+
+    if (filters.priceMax !== undefined) {
+      query.andWhere("item.startingPrice <= :priceMax", { priceMax: filters.priceMax })
+    }
+
+    // 👤 Owner logic (dynamiczny ownerId)
+    if (filters.ownerFilter && filters.ownerFilter !== "all" && filters.ownerId !== undefined) {
+      if (filters.ownerFilter === "own") {
+        query.andWhere("item.ownerId = :userId", { userId: filters.ownerId })
+      } else if (filters.ownerFilter === "others") {
+        query.andWhere("item.ownerId != :userId", { userId: filters.ownerId })
+      }
+    }
+
+    const [items, total] = await query.getManyAndCount()
 
     return {
       items: items.map(this.mapToDto),

@@ -10,6 +10,8 @@
     Add Product
   </button>
 
+  <app-item-filter [user]="isActive()" (filterChange)="onFilterChange($event)"></app-item-filter>
+
   <!-- 🧾 Lista produktów -->
   <div class="row wrap gap-1 space-around product-section">
     <app-product
@@ -35,6 +37,6 @@
   [(visible)]="homeCtrl.displayPopup"
   [product]="homeCtrl.selectedProduct"
   [mode]="homeCtrl.popupMode"
-  (submit)="onPopupConfirm($event)"
   (cancel)="homeCtrl.cancelPopup()"
+  (success)="onSeccessAdd()"
 />

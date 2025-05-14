@@ -62,7 +62,12 @@
     <!-- Category -->
     <div>
       <label for="category">Category</label>
-      <input id="category" type="text" pInputText formControlName="category" />
+      <select id="category" formControlName="category">
+        <option *ngFor="let category of categoryOptions" [value]="category">
+          {{ category }}
+        </option>
+      </select>
+      <div *ngIf="submitted && f['category'].invalid" class="form-error">Category is required</div>
     </div>
 
     <!-- Location -->
@@ -85,8 +90,7 @@
 
     <!-- Buttons -->
     <div class="form-actions">
-      <button pButton type="submit" [label]="mode === 'edit' ? 'Save' : 'Add'"></button>
-
+      <button pButton [label]="mode === 'edit' ? 'Save' : 'Add'"></button>
       <button
         pButton
         type="button"

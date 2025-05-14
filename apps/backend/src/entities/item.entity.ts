@@ -11,6 +11,7 @@ import {
 import { User } from "./user.entity"
 import { Review } from "./rewiew.entity"
 import { Bid } from "./bid.entity"
+import { CategoryEnum } from "@my-monorepo/consts"
 
 @Entity()
 export class Item {
@@ -58,8 +59,12 @@ export class Item {
   @CreateDateColumn()
   createdAt: Date // automatycznie ustawiana przez TypeORM
 
-  @Column()
-  category: string
+  @Column({
+    type: "enum",
+    enum: CategoryEnum,
+    default: CategoryEnum.OTHERS,
+  })
+  category: CategoryEnum
 
   @Column({ default: true })
   available: boolean

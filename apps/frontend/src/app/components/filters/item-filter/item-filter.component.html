@@ -1,0 +1,62 @@
+<div class="filter-wrapper">
+  <h3>Filtruj produkty</h3>
+
+  <label>
+    Nazwa:
+    <input [(ngModel)]="name" (input)="emitFilter()" />
+  </label>
+
+  <label>
+    Kategoria:
+    <select [(ngModel)]="category" (change)="emitFilter()">
+      <option value="">Wszystkie</option>
+      <option *ngFor="let cat of categoryOptions" [value]="cat.value">
+        {{ cat.label }}
+      </option>
+    </select>
+  </label>
+
+  <label>
+    typ
+    <select [(ngModel)]="isAuction" (change)="emitFilter()">
+      <option [ngValue]="undefined">Wszystkie</option>
+      <option [ngValue]="true">Aukcja</option>
+      <option [ngValue]="false">Licytacja</option>
+    </select>
+  </label>
+
+  <label>
+    Dostępność:
+    <select [(ngModel)]="available" (change)="emitFilter()">
+      <option value="">Wszystkie</option>
+      <option [value]="true">Dostępne</option>
+      <option [value]="false">Niedostępne</option>
+    </select>
+  </label>
+
+  <label>
+    Lokalizacja:
+    <input [(ngModel)]="location" (input)="emitFilter()" />
+  </label>
+
+  <label>
+    Cena od:
+    <input type="number" [(ngModel)]="priceMin" (input)="emitFilter()" />
+  </label>
+
+  <label>
+    Cena do:
+    <input type="number" [(ngModel)]="priceMax" (input)="emitFilter()" />
+  </label>
+
+  <label *ngIf="user">
+    Właściciel:
+    <select [(ngModel)]="ownerFilter" (change)="emitFilter()">
+      <option value="all">Wszystkie</option>
+      <option value="own">Moje</option>
+      <option value="others">Innych</option>
+    </select>
+  </label>
+
+  <button (click)="resetFilters()">Resetuj filtry</button>
+</div>

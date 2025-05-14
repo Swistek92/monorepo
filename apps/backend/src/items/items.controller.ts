@@ -21,6 +21,7 @@ import {
   GetAllItemsResponseDto,
   CreatedItemDto,
   DeleteItemResponseDto,
+  ItemFilterDto,
 } from "./dto"
 import { Public } from "../auth/decorators/public.decorator"
 import {
@@ -57,7 +58,7 @@ export class ItemsController {
     @Body() createItemDto,
     @Req() req: Request & { user: AuthJwtPayload },
   ): Promise<CreatedItemDto> {
-    console.log("item controller called")
+    console.log("item controller called", createItemDto)
     const userid = Number(req.user.sub)
     const item = { ...createItemDto, ownerId: userid } as CreateItemDto
     return this.itemsService.create(item)
@@ -78,12 +79,13 @@ export class ItemsController {
     description: "List of items returned.",
     type: GetAllItemsResponseDto,
   })
-  async findAll(
-    @Query("skip", new DefaultValuePipe(0), ParseIntPipe) skip: number,
-    @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
-  ): Promise<GetAllItemsResponseDto> {
-    const pagination: PaginationDTO = { skip, limit }
-    return this.itemsService.findAll(pagination)
+  async findAll(@Query() filters: ItemFilterDto): Promise<GetAllItemsResponseDto> {
+    const skip = filters.skip ?? 0
+    const limit = filters.limit ?? 10
+    console.log("filters", filters)
+    console.log("userId", filters.ownerId)
+    // console.log("skip", skip)
+    return this.itemsService.findAll({ skip, limit }, filters)
   }
 
   /**

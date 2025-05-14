@@ -3,6 +3,7 @@ import { ClothesFacadeService } from "./products/products-facade.service"
 import { CreatedItem, CreateItem, PopupMode } from "../../../types/types"
 import { Observable } from "rxjs"
 import { promise } from "zod"
+import { CategoryEnum } from "@my-monorepo/consts"
 @Injectable({ providedIn: "root" })
 export class HomeService {
   selectedProduct: CreatedItem = this.emptyProduct()
@@ -32,12 +33,12 @@ export class HomeService {
     this.popupMode = null
   }
 
-  confirmPopup(product: CreateItem): Observable<any> {
-    if (this.popupMode === "edit" && this.selectedProduct.id) {
-      return this.facade.editProduct(product, this.selectedProduct.id)
-    } else {
-      return this.facade.addProduct(product)
-    }
+  async confirmAddPopup(product: CreateItem) {
+    console.log("confirmAddPopup", product)
+    const add = await this.facade.addProduct(product)
+    console.log("answer", add)
+    this.facade.clearProductFromCache(add.id)
+    return add
   }
   resetProductCache(): void {
     const keysToClear = Object.keys(localStorage).filter((key) => key.startsWith("products_"))
@@ -56,7 +57,7 @@ export class HomeService {
       auctionEndDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 dni od teraz
       description: "",
       createdAt: new Date(),
-      category: "",
+      category: CategoryEnum.OTHERS,
       available: true,
       tags: [],
       location: "",

@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core"
 import { Observable, of, tap } from "rxjs"
 import { ApiService } from "../api.service"
 
-import { ItemsEndpoints } from "@my-monorepo/consts"
+import { ItemFilter, ItemsEndpoints } from "@my-monorepo/consts"
 import {
   CreatedItem,
   CreateItem,
@@ -18,13 +18,15 @@ import {
 export class ProductsService {
   constructor(private apiService: ApiService) {}
 
-  getProducts(params: Pagination): Observable<GetAllItemsResponse> {
+  getProducts(params: Pagination, filters?: ItemFilter): Observable<GetAllItemsResponse> {
     const skip = Number(params.skip) || 0
     const limit = Number(params.limit) || 10
 
-    const cacheKey = `products_${skip}_${limit}`
-    const cache = localStorage.getItem(cacheKey)
+    // 🔐 Unikalny klucz cache uwzględniający filtry
+    const filterKey = filters ? JSON.stringify(filters) : ""
+    const cacheKey = `products_${skip}_${limit}_${btoa(filterKey)}`
 
+    const cache = localStorage.getItem(cacheKey)
     if (cache) {
       const cachedData = JSON.parse(cache)
       const cachedTime = new Date(cachedData.timestamp)
@@ -32,13 +34,32 @@ export class ProductsService {
       const diffInMinutes = (now.getTime() - cachedTime.getTime()) / (1000 * 60)
 
       if (diffInMinutes < 15) {
-        return of(cachedData.data) // ⏱ Zwraca dane z cache
+        return of(cachedData.data)
       }
     }
 
+    // 🔧 Budujemy query string
+    const query: Record<string, any> = {
+      skip,
+      limit,
+    }
+
+    if (filters) {
+      if (filters.name) query["name"] = filters.name
+      if (filters.category) query["category"] = filters.category
+      if (filters.isAuction !== undefined) query["isAuction"] = filters.isAuction
+      if (filters.available !== undefined) query["available"] = filters.available
+      if (filters.location) query["location"] = filters.location
+      if (filters.priceMin !== undefined) query["priceMin"] = filters.priceMin
+      if (filters.priceMax !== undefined) query["priceMax"] = filters.priceMax
+      if (filters.ownerFilter) query["ownerFilter"] = filters.ownerFilter
+      if (filters.ownerId !== undefined) query["ownerId"] = filters.ownerId
+    }
+
     return this.apiService
-      .get<GetAllItemsResponse>(ItemsEndpoints.getAll(skip, limit), {
+      .get<GetAllItemsResponse>(ItemsEndpoints.getAll(), {
         responseType: "json",
+        params: query,
       })
       .pipe(
         tap((response) => {

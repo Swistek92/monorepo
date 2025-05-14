@@ -1,4 +1,8 @@
 import { z } from "zod"
+import { CategoryEnum } from "@my-monorepo/consts"
+
+// konwersja enuma do literal union
+const categoryEnumSchema = z.nativeEnum(CategoryEnum)
 
 // CREATE: Nowy przedmiot
 export const createItemSchema = z.object({
@@ -6,11 +10,11 @@ export const createItemSchema = z.object({
   image: z.string().url().optional(),
   isAuction: z.boolean(),
   startingPrice: z.number().min(0),
-  buyNowPrice: z.number().min(0).nullable().optional(), // ✅ poprawione
+  buyNowPrice: z.number().min(0).nullable().optional(),
   quantity: z.number().int().min(1),
-  auctionEndDate: z.coerce.date(), // ✅ poprawione
+  auctionEndDate: z.coerce.date(),
   description: z.string(),
-  category: z.string(),
+  category: categoryEnumSchema, // ✅ enum jako walidacja
   tags: z.array(z.string()),
   location: z.string(),
 })
@@ -22,14 +26,14 @@ export const createdItemSchema = z.object({
   id: z.number().int().positive(),
   name: z.string(),
   image: z.string().url(),
-  isAuction: z.boolean(), // nowy klucz
+  isAuction: z.boolean(),
   startingPrice: z.number().min(0),
   buyNowPrice: z.number().nullable().optional(),
   quantity: z.number().int().min(1),
   auctionEndDate: z.coerce.date(),
   description: z.string(),
   createdAt: z.coerce.date(),
-  category: z.string(),
+  category: categoryEnumSchema, // ✅ enum tutaj też
   available: z.boolean().optional().default(true),
   tags: z.array(z.string()),
   location: z.string(),

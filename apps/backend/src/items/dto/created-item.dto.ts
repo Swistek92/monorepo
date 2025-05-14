@@ -1,3 +1,4 @@
+import { CategoryEnum } from "@my-monorepo/consts"
 import { ApiProperty } from "@nestjs/swagger"
 import {
   IsString,
@@ -12,6 +13,7 @@ import {
   Max,
   IsEmail,
   IsDateString,
+  IsEnum,
 } from "class-validator"
 
 export class CreatedItemDto {
@@ -60,9 +62,9 @@ export class CreatedItemDto {
   @IsDateString()
   createdAt: string
 
-  @ApiProperty()
-  @IsString()
-  category: string
+  @ApiProperty({ enum: CategoryEnum })
+  @IsEnum(CategoryEnum)
+  category: CategoryEnum
 
   @ApiProperty({ required: false, default: true })
   @IsOptional()

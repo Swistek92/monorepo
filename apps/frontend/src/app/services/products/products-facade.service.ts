@@ -6,7 +6,8 @@ import {
   DeleteItemResponse,
   GetAllItemsResponse,
 } from "../../../../types/types"
-import { Observable } from "rxjs"
+import { firstValueFrom, Observable } from "rxjs"
+import { ItemFilter } from "@my-monorepo/consts"
 
 @Injectable({
   providedIn: "root",
@@ -14,16 +15,16 @@ import { Observable } from "rxjs"
 export class ClothesFacadeService {
   constructor(private productsService: ProductsService) {}
 
-  fetchProducts(skip: number, limit: number): Observable<GetAllItemsResponse> {
-    return this.productsService.getProducts({ skip, limit })
+  fetchProducts(skip: number, limit: number, filter: ItemFilter): Observable<GetAllItemsResponse> {
+    return this.productsService.getProducts({ skip, limit }, filter)
   }
 
   getProductById(id: number): Observable<CreatedItem> {
     return this.productsService.getProductById(id)
   }
 
-  addProduct(product: CreateItem): Observable<CreatedItem> {
-    return this.productsService.addProduct(product)
+  async addProduct(product: CreateItem): Promise<CreatedItem> {
+    return await firstValueFrom(this.productsService.addProduct(product))
   }
 
   editProduct(product: CreateItem, id: number): Observable<CreatedItem> {
@@ -32,5 +33,22 @@ export class ClothesFacadeService {
 
   deleteProduct(id: number): Observable<DeleteItemResponse> {
     return this.productsService.deleteProduct(id)
+  }
+
+  clearProductFromCache(productId: number): void {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key && key.startsWith("products_")) {
+        try {
+          const cachedData = JSON.parse(localStorage.getItem(key)!)
+          const items = cachedData?.data?.items
+          if (Array.isArray(items) && items.some((item: any) => item.id === productId)) {
+            localStorage.removeItem(key)
+          }
+        } catch (err) {
+          // nieczytelny cache – pomijamy
+        }
+      }
+    }
   }
 }

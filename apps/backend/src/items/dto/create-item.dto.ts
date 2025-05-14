@@ -7,10 +7,11 @@ import {
   IsOptional,
   IsBoolean,
   IsArray,
-  IsDateString,
-  IsInt,
   IsDate,
+  IsInt,
+  IsEnum,
 } from "class-validator"
+import { CategoryEnum } from "@my-monorepo/consts"
 
 export class CreateItemDto {
   @ApiProperty()
@@ -42,7 +43,7 @@ export class CreateItemDto {
 
   @IsInt()
   @Type(() => Number)
-  @ApiHideProperty() // 👈 Ukrywa w Swaggerze
+  @ApiHideProperty()
   ownerId: number
 
   @ApiProperty({ description: "Ilość sztuk" })
@@ -61,10 +62,9 @@ export class CreateItemDto {
   @IsNotEmpty()
   description!: string
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  category!: string
+  @ApiProperty({ enum: CategoryEnum })
+  @IsEnum(CategoryEnum)
+  category!: CategoryEnum
 
   @ApiProperty({ required: false, default: true })
   @IsOptional()

@@ -23,6 +23,7 @@ import { CreateItem, PopupMode } from "../../../../../types/types"
 import { PopupControllerService } from "../../../services/popup/popup-controller.service"
 import { ClothesFacadeService } from "../../../services/products/products-facade.service"
 import { HomeService } from "../../../services/home-service"
+import { CategoryEnum } from "@my-monorepo/consts"
 
 @Component({
   selector: "app-product-form",
@@ -45,15 +46,16 @@ export class ProductFormComponent implements OnInit, OnChanges {
   private popupController = inject(PopupControllerService<CreateItem>)
   private productFacade = inject(ClothesFacadeService)
   private homeService = inject(HomeService)
+  categoryOptions = Object.values(CategoryEnum)
 
   @Input() product: CreateItem | null = null
   @Input() mode: PopupMode = "add"
   @Input() visible = false
 
   @Output() visibleChange = new EventEmitter<boolean>()
-  @Output() submit = new EventEmitter<CreateItem>()
+  // @Output() submit = new EventEmitter<CreateItem>()
   @Output() cancel = new EventEmitter<void>()
-
+  @Output() success = new EventEmitter<void>()
   form!: FormGroup
   submitted = false
 
@@ -78,7 +80,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
         buyNowPrice: [product?.buyNowPrice ?? null],
         quantity: [product?.quantity ?? 1, [Validators.required, Validators.min(1)]],
         description: [product?.description || "", Validators.required],
-        category: [product?.category || "", Validators.required],
+        category: [product?.category ?? CategoryEnum.OTHERS, Validators.required],
         location: [product?.location || "", Validators.required],
         tags: [product?.tags || [], Validators.required],
       },
@@ -109,6 +111,8 @@ export class ProductFormComponent implements OnInit, OnChanges {
   }
 
   async onSubmit(): Promise<void> {
+    console.log("Submit triggered") // <--- test
+
     this.submitted = true
 
     if (this.form.invalid) {
@@ -119,16 +123,12 @@ export class ProductFormComponent implements OnInit, OnChanges {
     const cleanedProduct = this.cleanProduct(this.form.value)
 
     if (this.mode === "edit") {
-      // Edycja produktu — tu możesz wstawić np. updateProduct
       console.log("Updating product:", cleanedProduct)
-      // await this.homeService.confirmEditPopup?.(cleanedProduct) // opcjonalnie
     } else {
-      // Dodawanie nowego produktu
+      console.log("Adding new product:", cleanedProduct)
       await this.homeService.confirmAddPopup(cleanedProduct)
+      this.success.emit()
     }
-
-    // Możesz też opcjonalnie emitować submit:
-    // this.submit.emit(cleanedProduct)
   }
 
   private cleanProduct(formValue: any): CreateItem {
@@ -156,13 +156,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
   }
 
   onCancel(): void {
-    this.hide()
     this.cancel.emit()
-  }
-
-  private hide(): void {
-    this.visible = false
-    this.visibleChange.emit(this.visible)
   }
 
   get f() {

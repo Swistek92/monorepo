@@ -11,8 +11,10 @@ import {
   IsInt,
   IsPositive,
   Max,
+  IsEnum,
 } from "class-validator"
 import { Type } from "class-transformer"
+import { CategoryEnum } from "@my-monorepo/consts" // poprawna ścieżka do enuma
 
 export class UpdateItemDto {
   @ApiPropertyOptional()
@@ -60,10 +62,10 @@ export class UpdateItemDto {
   @IsString()
   description?: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: CategoryEnum })
   @IsOptional()
-  @IsString()
-  category?: string
+  @IsEnum(CategoryEnum)
+  category?: CategoryEnum
 
   @ApiPropertyOptional({ default: true })
   @IsOptional()
