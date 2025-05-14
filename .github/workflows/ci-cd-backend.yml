@@ -1,50 +1,15 @@
-name: CI/CD for Backend
+name: GKE Debug Deployment
 
 on:
-  push:
-    paths:
-      - "apps/backend/**"
-  pull_request:
-    paths:
-      - "apps/backend/**"
+  workflow_dispatch: # pozwala uruchomić ręcznie z GitHub GUI
 
 jobs:
-  build-and-deploy:
+  debug-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: "20"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests
-        run: npx nx test backend
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and push Docker image with cache
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: apps/backend/Dockerfile
-          push: true
-          tags: swistek/my-backend:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
@@ -56,28 +21,34 @@ jobs:
         with:
           project_id: ${{ secrets.GCP_PROJECT }}
 
+      - name: Debug GCP account & config
+        run: |
+          echo "🔍 gcloud auth list:"
+          gcloud auth list
+
+          echo "🧾 gcloud config list:"
+          gcloud config list
+
       - name: Configure kubectl
         run: |
+          echo "🔧 Fetching cluster credentials..."
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} \
             --region ${{ secrets.GKE_REGION }} \
             --project ${{ secrets.GCP_PROJECT }}
 
-      - name: Deploy updated image to GKE
+      - name: Get Deployments and Pods
         run: |
-          kubectl set image deployment/${{ secrets.GKE_DEPLOYMENT_NAME }} \
-            backend=swistek/my-backend:latest
-          kubectl rollout status deployment/${{ secrets.GKE_DEPLOYMENT_NAME }}
+          echo "📦 Available deployments:"
+          kubectl get deployments
 
-      - name: Notify Discord
-        if: always()
+          echo "🐳 Running pods:"
+          kubectl get pods
+
+      - name: (Optional) Test image update – no push
         run: |
-          curl -H "Content-Type: application/json" \
-            -X POST ${{ secrets.DISCORD_WEBHOOK_URL }} \
-            -d '{
-              "username": "GitHub Actions",
-              "embeds": [{
-                "title": "🚀 Backend Deployment",
-                "description": "**Status:** `${{ job.status }}`\n**Branch:** `${{ github.ref_name }}`\n**Commit:** `${{ github.sha }}`",
-                "color": 5814783
-              }]
-            }'
+          echo "🚀 Setting image to latest again (no actual push)"
+          kubectl set image deployment/${{ secrets.GKE_DEPLOYMENT_NAME }} \
+            backend=swistek/my-backend:latest || true
+
+          echo "🕒 Rollout status:"
+          kubectl rollout status deployment/${{ secrets.GKE_DEPLOYMENT_NAME }} || true

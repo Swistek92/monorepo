@@ -51,7 +51,7 @@ export class AuthController {
     if (!req.user) {
       return {
         statusCode: HttpStatus.UNAUTHORIZED,
-        message: "Unauthorized",
+        message: "Unauthsorized",
         error: "Unauthorized",
       }
     }
