@@ -29,5 +29,29 @@
 </p-card>
 
 <!-- 💬 Sekcja licytacji -->
-<!-- <app-bids *ngIf="product" [productId]="product.id" [productPrice]=product.price></app-bids> -->
+<!-- <app-bids
+  *ngIf="product"
+  [productId]="product.id"
+  [productPrice]="product.startingPrice"
+></app-bids> -->
+
+<!-- Aukcja lub Kup teraz -->
+<div class="mt-2">
+  <ng-container *ngIf="product.isAuction; else buyNowSection">
+    <!-- Jeśli aukcja -->
+    <app-bids
+      *ngIf="product"
+      [productId]="product.id"
+      [productPrice]="product.startingPrice"
+    ></app-bids>
+  </ng-container>
+
+  <!-- Jeśli NIE jest aukcją -->
+  <ng-template #buyNowSection>
+    <button type="button" pButton label="Kup teraz" icon="pi pi-shopping-cart"></button>
+    <!-- Możesz dodać drugi przycisk jeśli chcesz -->
+    <!-- <button type="button" pButton label="Dodaj do koszyka" icon="pi pi-cart-plus"></button> -->
+  </ng-template>
+</div>
+
 <!-- <app-bids *ngIf="product" [productId]="product.id" [productPrice]="+product.price"></app-bids> -->

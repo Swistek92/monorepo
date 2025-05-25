@@ -2,10 +2,6 @@ import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConne
 import * as path from "path"
 import { registerAs } from "@nestjs/config"
 
-console.log("Connecting to database...")
-console.log("DB_URL:", process.env.DB_URL)
-console.log("DB_PORT:", process.env.DB_PORT)
-
 export default registerAs(
   "dbconfig.dev",
   (): PostgresConnectionOptions => ({

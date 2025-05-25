@@ -79,5 +79,13 @@
     "version": {
       "preVersionCommand": "npx nx run-many -t build"
     }
+  },
+  "projects": {
+    "frontend": {
+      "tags": []
+    },
+    "backend": {
+      "tags": []
+    }
   }
 }

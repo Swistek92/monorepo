@@ -26,7 +26,7 @@ import { BidsComponent } from "./bids/bids.component"
   styleUrls: ["./product-details.component.scss"],
 })
 export class ProductDetailsComponent implements OnInit {
-  product: CreatedItem | null = null
+  product: CreatedItem
   loading = true
 
   constructor(

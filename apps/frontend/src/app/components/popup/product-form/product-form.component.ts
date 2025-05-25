@@ -54,7 +54,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
 
   @Output() visibleChange = new EventEmitter<boolean>()
   // @Output() submit = new EventEmitter<CreateItem>()
-  @Output() cancel = new EventEmitter<void>()
+  @Output() cancelEvent = new EventEmitter<void>()
   @Output() success = new EventEmitter<void>()
   form!: FormGroup
   submitted = false
@@ -127,6 +127,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
     } else {
       console.log("Adding new product:", cleanedProduct)
       await this.homeService.confirmAddPopup(cleanedProduct)
+      this.productFacade.clearAllProductCache()
       this.success.emit()
     }
   }
@@ -156,7 +157,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
   }
 
   onCancel(): void {
-    this.cancel.emit()
+    this.cancelEvent.emit()
   }
 
   get f() {

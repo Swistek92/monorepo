@@ -35,6 +35,14 @@ export class ClothesFacadeService {
     return this.productsService.deleteProduct(id)
   }
 
+  clearAllProductCache(): void {
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("products_")) {
+        localStorage.removeItem(key)
+      }
+    })
+  }
+
   clearProductFromCache(productId: number): void {
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i)

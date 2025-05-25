@@ -3,7 +3,6 @@ node_modules
 **/node_modules
 
 # Ignoruj frontend + testy
-apps/frontend/
 apps/frontend-e2e/
 apps/backend-e2e/
 .angular/
