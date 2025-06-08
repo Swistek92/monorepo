@@ -6,16 +6,21 @@
 import { Logger, ValidationPipe } from "@nestjs/common"
 import { NestFactory } from "@nestjs/core"
 import { AppModule } from "./app.module"
-import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger" // <-- dodaj Swagger
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger"
+import { writeFileSync } from "fs" // ← do zapisu pliku
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
+
+  // Walidacja globalna
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }))
+
+  // CORS
   app.enableCors({
     origin: "*",
   })
 
-  // ✅ Konfiguracja Swagger + Bearer Auth (JWT)
+  // ✅ Konfiguracja Swagger + JWT
   const config = new DocumentBuilder()
     .setTitle("My API")
     .setDescription("API documentation with JWT authentication")
@@ -28,18 +33,24 @@ async function bootstrap() {
         name: "Authorization",
         in: "header",
       },
-      "access-token", // <- identyfikator dla @ApiBearerAuth()
+      "access-token", // <- identyfikator do @ApiBearerAuth()
     )
     .build()
 
-  const documentFactory = () => SwaggerModule.createDocument(app, config)
+  // Tworzenie dokumentu OpenAPI
+  const document = SwaggerModule.createDocument(app, config)
 
-  SwaggerModule.setup("api", app, documentFactory)
+  // Interfejs Swagger UI pod /api
+  SwaggerModule.setup("api", app, document)
+
+  // 📄 Zapis dokumentacji do pliku JSON
+  writeFileSync("./swagger.json", JSON.stringify(document, null, 2))
 
   const port = 3000
-  // const port = process.env.PORT || 3000
   await app.listen(port)
   Logger.log(`🚀 Application is running on: http://localhost:${port}/`)
+  Logger.log(`📄 Swagger docs available at: http://localhost:${port}/api`)
+  Logger.log(`🧾 Swagger file saved as: swagger.json`)
 }
 
 bootstrap()

@@ -1,0 +1,1053 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/user/profile": {
+      "get": {
+        "operationId": "UserController_getProfile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafeUserDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get current user's profile (JWT- required)",
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/user/{id}": {
+      "patch": {
+        "operationId": "UserController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Update a user (owner or admin)",
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/user/remove/{id}": {
+      "delete": {
+        "operationId": "UserController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Remove user (self or by admin) (JWT- required)",
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/user/all": {
+      "get": {
+        "operationId": "UserController_GetAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SafeUserDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get all users (admin only) (JWT- required)",
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/user/active/{id}": {
+      "post": {
+        "operationId": "UserController_active",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Toggle active status of a user (admin only) (JWT- required)",
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/items": {
+      "post": {
+        "operationId": "ItemsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedItemDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Create new item (auth required)",
+        "tags": [
+          "Items"
+        ]
+      },
+      "get": {
+        "operationId": "ItemsController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of items returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllItemsResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all items with pagination (public)",
+        "tags": [
+          "Items"
+        ]
+      }
+    },
+    "/items/{id}": {
+      "get": {
+        "operationId": "ItemsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "ID of the item to retrieve",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedItemDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item not found."
+          }
+        },
+        "summary": "Get item by ID (public)",
+        "tags": [
+          "Items"
+        ]
+      },
+      "patch": {
+        "operationId": "ItemsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "ID of the item to update",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedItemDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Item not found."
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Update item by ID (auth required)",
+        "tags": [
+          "Items"
+        ]
+      },
+      "delete": {
+        "operationId": "ItemsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "ID of the item to delete",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteItemResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Item not found."
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Delete item by ID (auth required)",
+        "tags": [
+          "Items"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refreshToken",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/signout": {
+      "post": {
+        "operationId": "AuthController_signOut",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/bids": {
+      "post": {
+        "operationId": "BidsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBidDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Bids"
+        ]
+      },
+      "patch": {
+        "operationId": "BidsController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBidDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Bids"
+        ]
+      }
+    },
+    "/bids/{id}": {
+      "get": {
+        "operationId": "BidsController_findAllForItem",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Bids"
+        ]
+      },
+      "delete": {
+        "operationId": "BidsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Bids"
+        ]
+      }
+    },
+    "/bids/by-admin/{id}": {
+      "delete": {
+        "operationId": "BidsController_removeByAdmin",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Bids"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "My API",
+    "description": "API documentation with JWT authentication",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "access-token": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "name": "Authorization",
+        "in": "header"
+      }
+    },
+    "schemas": {
+      "Item": {
+        "type": "object",
+        "properties": {}
+      },
+      "Bid": {
+        "type": "object",
+        "properties": {}
+      },
+      "Review": {
+        "type": "object",
+        "properties": {}
+      },
+      "SafeUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "ID użytkownika"
+          },
+          "name": {
+            "type": "string",
+            "example": "Jan Kowalski",
+            "description": "Imię i nazwisko użytkownika"
+          },
+          "email": {
+            "type": "string",
+            "example": "jan.kowalski@example.com",
+            "description": "Email użytkownika"
+          },
+          "roles": {
+            "example": [
+              "USER"
+            ],
+            "description": "Role użytkownika",
+            "type": "array",
+            "items": {
+              "type": "array"
+            }
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true,
+            "description": "Czy użytkownik jest aktywny"
+          },
+          "verified": {
+            "type": "boolean",
+            "example": false,
+            "description": "Czy użytkownik jest zweryfikowany"
+          },
+          "avatar": {
+            "type": "string",
+            "example": "https://example.com/avatar.jpg",
+            "description": "URL avatara użytkownika"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Data utworzenia konta",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Data ostatniej aktualizacji",
+            "format": "date-time"
+          },
+          "lastLogin": {
+            "type": "string",
+            "description": "Data ostatniego logowania",
+            "format": "date-time"
+          },
+          "favorites": {
+            "description": "Ulubione przedmioty użytkownika",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Item"
+            }
+          },
+          "bids": {
+            "description": "Oferty użytkownika",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Bid"
+            }
+          },
+          "ownedItems": {
+            "description": "Przedmioty wystawione przez użytkownika",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Item"
+            }
+          },
+          "reviews": {
+            "description": "Recenzje wystawione przez użytkownika",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Review"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "roles",
+          "isActive",
+          "verified",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John"
+          },
+          "email": {
+            "type": "string",
+            "example": "john@example.com"
+          }
+        },
+        "required": [
+          "name",
+          "email"
+        ]
+      },
+      "CreateItemDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "default": "https://media.sketchfab.com/models/4bdae44017424870b1759db195618576/thumbnails/332515a54cb242948ab45fe368a63e69/7ee040f9cb6b4f12a383ea299bc9b0bf.jpeg"
+          },
+          "isAuction": {
+            "type": "boolean",
+            "description": "Czy jest to licytacja (true) czy kup teraz (false)",
+            "default": true
+          },
+          "startingPrice": {
+            "type": "number",
+            "description": "Cena wywoławcza"
+          },
+          "buyNowPrice": {
+            "type": "number",
+            "description": "Cena kup teraz"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Ilość sztuk"
+          },
+          "description": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "cars",
+              "computers",
+              "books",
+              "fashion",
+              "tools",
+              "others"
+            ]
+          },
+          "available": {
+            "type": "boolean",
+            "default": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "location": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "number",
+            "default": 0
+          },
+          "views": {
+            "type": "number",
+            "default": 0
+          }
+        },
+        "required": [
+          "name",
+          "isAuction",
+          "startingPrice",
+          "quantity",
+          "description",
+          "category",
+          "tags",
+          "location"
+        ]
+      },
+      "CreatedItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          },
+          "isAuction": {
+            "type": "boolean"
+          },
+          "startingPrice": {
+            "type": "number"
+          },
+          "buyNowPrice": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "auctionEndDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "cars",
+              "computers",
+              "books",
+              "fashion",
+              "tools",
+              "others"
+            ]
+          },
+          "available": {
+            "type": "boolean",
+            "default": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "location": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "number"
+          },
+          "rating": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 5,
+            "default": 0
+          },
+          "views": {
+            "type": "number",
+            "minimum": 0,
+            "default": 0
+          },
+          "ownerEmail": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "image",
+          "isAuction",
+          "startingPrice",
+          "quantity",
+          "auctionEndDate",
+          "description",
+          "createdAt",
+          "category",
+          "tags",
+          "location",
+          "ownerId"
+        ]
+      },
+      "GetAllItemsResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreatedItemDto"
+            }
+          },
+          "total": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ]
+      },
+      "UpdateItemDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          },
+          "startingPrice": {
+            "type": "number",
+            "description": "Cena wywoławcza",
+            "minimum": 0
+          },
+          "buyNowPrice": {
+            "type": "number",
+            "description": "Cena kup teraz",
+            "minimum": 0
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Ilość sztuk",
+            "minimum": 1
+          },
+          "auctionEndDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data zakończenia aukcji"
+          },
+          "description": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "cars",
+              "computers",
+              "books",
+              "fashion",
+              "tools",
+              "others"
+            ]
+          },
+          "available": {
+            "type": "boolean",
+            "default": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "location": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "number"
+          },
+          "rating": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "views": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      },
+      "DeleteItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "admin@example.com",
+            "description": "Email użytkownika używany do logowania"
+          },
+          "password": {
+            "type": "string",
+            "example": "admin",
+            "description": "Hasło użytkownika"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "LoginResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "ID użytkownika"
+          },
+          "roles": {
+            "example": [
+              "USER"
+            ],
+            "description": "Role użytkownika",
+            "type": "array",
+            "items": {
+              "type": "array"
+            }
+          },
+          "accessToken": {
+            "type": "string",
+            "example": "jwt-access-token",
+            "description": "Token dostępu JWT"
+          },
+          "refreshToken": {
+            "type": "string",
+            "example": "jwt-refresh-token",
+            "description": "Token odświeżający JWT"
+          }
+        },
+        "required": [
+          "id",
+          "roles",
+          "accessToken",
+          "refreshToken"
+        ]
+      },
+      "CreateBidDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 2,
+            "description": "ID przedmiotu"
+          },
+          "amount": {
+            "type": "number",
+            "example": 150,
+            "description": "Kwota oferty"
+          }
+        },
+        "required": [
+          "id",
+          "amount"
+        ]
+      },
+      "UpdateBidDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 2,
+            "description": "ID przedmiotu"
+          },
+          "amount": {
+            "type": "number",
+            "example": 150,
+            "description": " nowa Kwota oferty"
+          },
+          "bidId": {
+            "type": "number",
+            "example": 10,
+            "description": "bid id"
+          }
+        },
+        "required": [
+          "id",
+          "amount",
+          "bidId"
+        ]
+      }
+    }
+  }
+}
